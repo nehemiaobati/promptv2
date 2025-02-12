@@ -4,7 +4,6 @@ header('Content-Type: application/json');
 
 // Handle only POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     // Get the JSON data from the request body
     $json_data = file_get_contents('php://input');
 
@@ -15,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
         // JSON decoding failed
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'Invalid JSON data']);
+        $error_message = 'Invalid JSON data: ' . json_last_error_msg();
+        error_log($error_message);  // Log the JSON error
+        echo json_encode(['error' => $error_message]);
         exit;
     }
 
@@ -25,25 +26,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $filePath = __DIR__ . "/" . $filename; // Store files in the same directory as the PHP script
 
     // Write JSON data to file
-    if(file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
-        // Log the file creation (optional)
-        file_put_contents("log_file_creation.log", "File $filename created at: ". date("Y-m-d H:i:s"). PHP_EOL, FILE_APPEND);
+    try {
+        if (file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
+            // Log the file creation and data
+            $log_message = "File $filename created at: " . date("Y-m-d H:i:s") . PHP_EOL;
+            $log_message .= "Data: " . $json_data . PHP_EOL;  // Log the entire JSON data
+            file_put_contents("log_file_creation.log", $log_message, FILE_APPEND);
 
-           // Example response
-          $response = [
-              'status' => 'success',
-              'message' => 'Data received and stored',
-              'file' => $filename,
-          ];
+            // Example response
+            $response = [
+                'status' => 'success',
+                'message' => 'Data received and stored',
+                'file' => $filename,
+            ];
+        } else {
+            // Failed to create the file
+            http_response_code(500); // Internal Server Error
+            $response = [
+                'status' => 'error',
+                'message' => 'Failed to store data on the server',
+            ];
+            error_log("Failed to write data to file: $filePath"); // Log the file writing error
         }
-     else{
-           // Failed to create the file
-          http_response_code(500); // Internal Server Error
-          $response = [
-              'status' => 'error',
-              'message' => 'Failed to store data on the server',
-          ];
-       }
+    } catch (Exception $e) {
+        // Catch any other exceptions during file writing
+        http_response_code(500); // Internal Server Error
+        $response = [
+            'status' => 'error',
+            'message' => 'Failed to store data on the server: ' . $e->getMessage(),
+        ];
+        error_log("Exception during file writing: " . $e->getMessage());
+    }
+
     // Send a JSON response back to the client
     echo json_encode($response);
 } else {

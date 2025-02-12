@@ -1,17 +1,28 @@
 <?php
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../functions.php';
 
-class Payment {
-    private $pdo;
+class Payment
+{
+    private PDO $pdo;
 
-    public function __construct($pdo) {
+    public function __construct(PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function initiateSTKPush($userId, $amount, $phone) {
-        global $mpesa_consumer_key, $mpesa_consumer_secret, $mpesa_business_shortcode,$mpesa_business_shortcodet, $mpesa_passkey, $mpesa_account_reference, $mpesa_transaction_desc;
-
+    /**
+     * Initiates an M-Pesa STK push.
+     *
+     * @param int $userId The ID of the user.
+     * @param float $amount The amount to charge.
+     * @param string $phone The phone number to charge (254...).
+     * @return string A message indicating the result of the operation.
+     * @throws Exception If the STK push fails.
+     */
+    public function initiateSTKPush(int $userId, float $amount, string $phone): string
+    {
         if ($amount <= 0) {
             throw new Exception("Invalid amount.");
         }
@@ -21,12 +32,21 @@ class Payment {
             throw new Exception("Invalid phone number.");
         }
 
-        $accessToken = generateMpesaAccessToken($mpesa_consumer_key, $mpesa_consumer_secret);
+        $accessToken = generateMpesaAccessToken(MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET);
         if (!$accessToken) {
             throw new Exception("Failed to generate M-Pesa access token.");
         }
 
-        $mpesaResponse = initiateMpesaSTKPush($accessToken, $mpesa_business_shortcode,$mpesa_business_shortcodet, $mpesa_passkey, $amount, $phone, $mpesa_account_reference, $mpesa_transaction_desc);
+        $mpesaResponse = initiateMpesaSTKPush(
+            $accessToken,
+            MPESA_BUSINESS_SHORTCODE,
+            MPESA_BUSINESS_SHORTCODET,
+            MPESA_PASSKEY,
+            $amount,
+            $phone,
+            MPESA_ACCOUNT_REFERENCE,
+            MPESA_TRANSACTION_DESC
+        );
 
         if (isset($mpesaResponse['ResponseCode']) && $mpesaResponse['ResponseCode'] == "0") {
             $merchantRequestID = $mpesaResponse['MerchantRequestID'];
@@ -44,84 +64,106 @@ class Payment {
             throw new Exception("M-Pesa STK push failed. Please try again.");
         }
     }
-    public function processCallback() {
-       global $confirmations_dir;
+
+    /**
+     * Processes the M-Pesa callback.
+     *
+     * @return void
+     */
+    public function processCallback(): void
+    {
         // Get all JSON files in confirmations directory
-         $files = glob($confirmations_dir . "*.json");
-         // Process each file
-         foreach ($files as $file) {
-             $json_data = file_get_contents($file);
+        $files = glob(CONFIRMATIONS_DIR . "*.json");
+
+        // Process each file
+        foreach ($files as $file) {
+            $json_data = file_get_contents($file);
+
             // Decode the JSON data into a PHP associative array
-             $data = json_decode($json_data, true);
-             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                 continue;
-              }
-              if (isset($data['Body']['stkCallback'])) {
-                 $stkCallback = $data['Body']['stkCallback'];
-                 $merchantRequestID = $stkCallback['MerchantRequestID'];
-                 $resultCode = $stkCallback['ResultCode'];
+            $data = json_decode($json_data, true);
 
-                 if ($resultCode == 0) {
-                     // Payment successful
-                     $mpesaReceiptNumber = null;
-                     if (isset($stkCallback['CallbackMetadata']['Item'])) {
-                         foreach ($stkCallback['CallbackMetadata']['Item'] as $item) {
-                             if ($item['Name'] == 'MpesaReceiptNumber') {
-                                 $mpesaReceiptNumber = $item['Value'];
-                                 break;
-                             }
-                         }
-                     }
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                continue; // Skip if JSON is invalid
+            }
 
-                     try {
-                         $this->pdo->beginTransaction();
+            if (isset($data['Body']['stkCallback'])) {
+                $stkCallback = $data['Body']['stkCallback'];
+                $merchantRequestID = $stkCallback['MerchantRequestID'];
+                $resultCode = $stkCallback['ResultCode'];
 
-                         // Update transaction status
-                         $stmt = $this->pdo->prepare("UPDATE transactions SET mpesa_receipt_number = ?, status = 'success' WHERE merchant_request_id = ?");
-                         $stmt->execute([$mpesaReceiptNumber, $merchantRequestID]);
+                if ($resultCode == 0) {
+                    // Payment successful
+                    $mpesaReceiptNumber = null;
+                    if (isset($stkCallback['CallbackMetadata']['Item'])) {
+                        foreach ($stkCallback['CallbackMetadata']['Item'] as $item) {
+                            if ($item['Name'] == 'MpesaReceiptNumber') {
+                                $mpesaReceiptNumber = $item['Value'];
+                                break;
+                            }
+                        }
+                    }
 
-                         // Get transaction details
-                         $stmt = $this->pdo->prepare("SELECT amount, user_id FROM transactions WHERE merchant_request_id = ?");
-                         $stmt->execute([$merchantRequestID]);
-                         $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
-                         $amount = $transaction['amount'];
-                         $userId = $transaction['user_id'];
+                    try {
+                        $this->pdo->beginTransaction();
 
-                         // Update user balance
-                         $stmt = $this->pdo->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
-                         $stmt->execute([$amount, $userId]);
+                        // Update transaction status
+                        $stmt = $this->pdo->prepare("UPDATE transactions SET mpesa_receipt_number = ?, status = 'success' WHERE merchant_request_id = ?");
+                        $stmt->execute([$mpesaReceiptNumber, $merchantRequestID]);
 
-                         $this->pdo->commit();
+                        // Get transaction details
+                        $stmt = $this->pdo->prepare("SELECT amount, user_id FROM transactions WHERE merchant_request_id = ?");
+                        $stmt->execute([$merchantRequestID]);
+                        $transaction = $stmt->fetch();
+                        $amount = $transaction['amount'];
+                        $userId = $transaction['user_id'];
 
-                         // Delete the processed JSON file
-                         unlink($file);
-                     } catch (PDOException $e) {
-                         $this->pdo->rollBack();
-                         error_log("Error processing M-Pesa callback: " . $e->getMessage());
-                     }
-                 } else {
-                     // Payment failed
-                     try {
-                         // Update transaction status
-                         $stmt = $this->pdo->prepare("UPDATE transactions SET status = 'failed' WHERE merchant_request_id = ?");
-                         $stmt->execute([$merchantRequestID]);
+                        // Update user balance
+                        $stmt = $this->pdo->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
+                        $stmt->execute([$amount, $userId]);
 
-                         // Delete the processed JSON file
-                         unlink($file);
-                     } catch (PDOException $e) {
-                         error_log("Error processing M-Pesa callback: " . $e->getMessage());
-                     }
-                 }
-             }
-         }
-     }
-    public function initiateB2CWithdrawal($userId, $amount, $phoneNumber) {
-        global $mpesa_consumer_key, $mpesa_consumer_secret,$mpesa_business_shortcode,$mpesa_passkey;
-        $accessToken = generateMpesaAccessToken($mpesa_consumer_key, $mpesa_consumer_secret);
+                        $this->pdo->commit();
+
+                        // Delete the processed JSON file
+                        unlink($file);
+                    } catch (PDOException $e) {
+                        $this->pdo->rollBack();
+                        error_log("Error processing M-Pesa callback: " . $e->getMessage());
+                    }
+                } else {
+                    // Payment failed
+                    try {
+                        // Update transaction status
+                        $stmt = $this->pdo->prepare("UPDATE transactions SET status = 'failed' WHERE merchant_request_id = ?");
+                        $stmt->execute([$merchantRequestID]);
+
+                        // Delete the processed JSON file
+                        unlink($file);
+                    } catch (PDOException $e) {
+                        error_log("Error processing M-Pesa callback: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Initiates a B2C withdrawal.
+     *
+     * @param int $userId The ID of the user.
+     * @param float $amount The amount to withdraw.
+     * @param string $phoneNumber The phone number to send the withdrawal to.
+     * @return array An array containing the ConversationID and OriginatorConversationID.
+     * @throws Exception If the B2C initiation fails.
+     */
+    public function initiateB2CWithdrawal(int $userId, float $amount, string $phoneNumber): array
+    {
+        global $mpesa_passkey;
+
+        $accessToken = generateMpesaAccessToken(MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET);
         if (!$accessToken) {
             throw new Exception("Failed to generate M-Pesa access token.");
         }
-        $shortcode = $mpesa_business_shortcode;
+        $shortcode = MPESA_BUSINESS_SHORTCODE;
         $curl = curl_init();
         $timestamp = date('YmdHis');
         $password = base64_encode($shortcode . $mpesa_passkey . $timestamp);
@@ -143,11 +185,11 @@ class Payment {
                         'SecurityCredential' => 'EsJocK7+NjqZPC3I3EO+TbvS+xVb9TymWwaKABoaZr/Z/n0UysSs..', // Use your security credential
                         'CommandID' => 'BusinessPayment',
                         'Amount' => $amount,
-                        'PartyA' => $mpesa_business_shortcode,
+                        'PartyA' => MPESA_BUSINESS_SHORTCODE,
                         'PartyB' => $phoneNumber,
                         'Remarks' => 'Referral Earnings Withdrawal',
-                        'QueueTimeOutURL' => 'https://afrikenkid.com/confirmation/b2ctimeout.php',
-                        'ResultURL' => 'https://afrikenkid.com/confirmation/b2cresult.php', // Update to your domain
+                        'QueueTimeOutURL' => MPESA_CALLBACK_URL,
+                        'ResultURL' => MPESA_CALLBACK_URL, // Update to your domain.  Consider separate URL
                         'Occasion' => 'Referral Withdrawal',
                         'OriginatorConversationID' => $transactionRef
                     )
@@ -169,31 +211,36 @@ class Payment {
             error_log("B2C API request failed: " . $response);
             throw new Exception("Failed to initiate B2C withdrawal. Error code: " . $responseCode . ", Response: " . $response);
         }
-        
+
         return array(
             'ConversationID' => $decodedResponse['ConversationID'],
             'OriginatorConversationID' => $decodedResponse['OriginatorConversationID'],
-             'ResponseDescription' => $decodedResponse['ResponseDescription']
+            'ResponseDescription' => $decodedResponse['ResponseDescription']
         );
     }
- 
- 
 
-    
-    // ... (initiateSTKPush, processCallback, initiateB2CWithdrawal, processB2CTimeoutCallback - these methods remain unchanged) ...
-     
-    public function processB2CResultCallback() {
-        global $b2cconfirmations_dir;
+
+    /**
+     * Processes the B2C result callback.
+     *
+     * @return void
+     */
+    public function processB2CResultCallback(): void
+    {
         // Get all JSON files in confirmations directory
-        $files = glob($b2cconfirmations_dir . "*.json");
+        $files = glob(B2CCONFIRMATIONS_DIR . "*.json");
+
         // Process each file
         foreach ($files as $file) {
             $json_data = file_get_contents($file);
+
             // Decode the JSON data into a PHP associative array
             $data = json_decode($json_data, true);
+
             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                continue;
+                continue;  // Skip if JSON is invalid
             }
+
             if (isset($data['Result'])) {
                 $result = $data['Result'];
                 $resultType = $result['ResultType'];
@@ -212,7 +259,7 @@ class Payment {
                         // Find user_id by transaction_id (OriginatorConversationID)
                         $stmt = $this->pdo->prepare("SELECT user_id, amount FROM withdrawals WHERE transaction_id = ?");
                         $stmt->execute([$originatorConversationID]);
-                        $withdrawal = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $withdrawal = $stmt->fetch();
                         $userId = $withdrawal['user_id'];
                         $amount = $withdrawal['amount'];
 
@@ -244,35 +291,45 @@ class Payment {
             }
         }
     }
-    public function processB2CTimeoutCallback() {
-         global $confirmations_dir;
-         // Get all JSON files in confirmations directory
-         $files = glob($confirmations_dir . "*.json");
-         // Process each file
-         foreach ($files as $file) {
-             $json_data = file_get_contents($file);
-             // Decode the JSON data into a PHP associative array
-             $data = json_decode($json_data, true);
-             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-                 continue;
-              }
-              if (isset($data['Result'])) {
-                 $result = $data['Result'];
-                 $resultType = $result['ResultType'];
-                 $resultCode = $result['ResultCode'];
-                 $originatorConversationID = $result['OriginatorConversationID'];
-                // B2C Payment failed - update withdrawal status to 'failed'
-                 try {
-                     // Update withdrawal status to 'failed'
-                     $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'failed' WHERE transaction_id = ?");
-                     $stmt->execute([$originatorConversationID]);
 
-                     // Delete the processed JSON file
-                     unlink($file);
-                 } catch (PDOException $e) {
-                     error_log("Error processing B2C result callback: " . $e->getMessage());
-                 }
-             }
-         }
-     }
+    /**
+     * Processes the B2C timeout callback.
+     *
+     * @return void
+     */
+    public function processB2CTimeoutCallback(): void
+    {
+        // Get all JSON files in confirmations directory
+        $files = glob(CONFIRMATIONS_DIR . "*.json");
+
+        // Process each file
+        foreach ($files as $file) {
+            $json_data = file_get_contents($file);
+
+            // Decode the JSON data into a PHP associative array
+            $data = json_decode($json_data, true);
+
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                continue; // Skip if JSON is invalid
+            }
+
+            if (isset($data['Result'])) {
+                $result = $data['Result'];
+                $resultType = $result['ResultType'];
+                $resultCode = $result['ResultCode'];
+                $originatorConversationID = $result['OriginatorConversationID'];
+                // B2C Payment failed - update withdrawal status to 'failed'
+                try {
+                    // Update withdrawal status to 'failed'
+                    $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'failed' WHERE transaction_id = ?");
+                    $stmt->execute([$originatorConversationID]);
+
+                    // Delete the processed JSON file
+                    unlink($file);
+                } catch (PDOException $e) {
+                    error_log("Error processing B2C result callback: " . $e->getMessage());
+                }
+            }
+        }
+    }
 }

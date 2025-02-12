@@ -1,7 +1,4 @@
 <?php
-//ini_set('session.cookie_httponly', 1);
-//ini_set('session.use_only_cookies', 1);
-// ini_set('session.cookie_secure', 1); // Only if you have HTTPS
 
 require_once 'config.php';
 session_start();
@@ -15,63 +12,78 @@ $pdo = getPDOConnection();
 $user = new User($pdo);
 $payment = new Payment($pdo);
 $admin = new Admin($pdo);
+
 $errors = [];
 $success = "";
 
 // Check if the user is logged in and is an admin
 if (!isset($_SESSION['user_id']) || !$admin->isAdmin($_SESSION['user_id'])) {
-    header("Location: index.php"); // Redirect to the login page
+    header("Location: index.php");
     exit();
 }
 
 // Handle Set Initial Deposit
 if (isset($_POST['set_initial_deposit'])) {
-    $newInitialDeposit = (float)$_POST['initial_deposit'];
-    if ($newInitialDeposit > 0) {
+    try {
+        $newInitialDeposit = (float)$_POST['initial_deposit'];
+        if ($newInitialDeposit <= 0) {
+            throw new Exception("Invalid initial deposit amount.");
+        }
         if ($admin->setInitialDeposit($newInitialDeposit)) {
             $success = "Initial deposit amount updated successfully.";
         } else {
-            $errors[] = "Failed to update initial deposit amount.";
+            throw new Exception("Failed to update initial deposit amount.");
         }
-    } else {
-        $errors[] = "Invalid initial deposit amount.";
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
     }
 }
 
 // Handle Approve Withdrawal
 if (isset($_POST['approve_withdrawal'])) {
-    $withdrawalId = (int)$_POST['withdrawal_id'];
-    $userId = (int)$_POST['user_id'];
-    $amount = (float)$_POST['amount'];
-    $phoneNumber = $_POST['phone_number']; 
-    $message = $admin->approveWithdrawal($withdrawalId, $userId, $amount, $phoneNumber);
-    if (strpos($message, "Error") === 0) {
-        $errors[] = $message;
-    } else {
+    try {
+        $withdrawalId = (int)$_POST['withdrawal_id'];
+        $userId = (int)$_POST['user_id'];
+        $amount = (float)$_POST['amount'];
+        $phoneNumber = sanitizeInput($_POST['phone_number']); // Sanitize phone number
+
+        $message = $admin->approveWithdrawal($withdrawalId, $userId, $amount, $phoneNumber);
         $success = $message;
+
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
     }
 }
 
 // Handle Suspend Withdrawal
 if (isset($_POST['suspend_withdrawal'])) {
-    $withdrawalId = (int)$_POST['withdrawal_id'];
-    if ($admin->suspendWithdrawal($withdrawalId)) {
-        $success = "Withdrawal suspended successfully.";
-    } else {
-        $errors[] = "Failed to suspend withdrawal.";
+    try {
+        $withdrawalId = (int)$_POST['withdrawal_id'];
+        if ($admin->suspendWithdrawal($withdrawalId)) {
+            $success = "Withdrawal suspended successfully.";
+        } else {
+            throw new Exception("Failed to suspend withdrawal.");
+        }
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
     }
 }
 
 // Handle Approve All Pending Withdrawals
 if (isset($_POST['approve_all_withdrawals'])) {
-    if ($admin->approveAllPendingWithdrawals()) {
-        $success = "All pending withdrawals approved successfully.";
-    } else {
-        $errors[] = "Failed to approve all pending withdrawals.";
+    try {
+        if ($admin->approveAllPendingWithdrawals()) {
+            $success = "All pending withdrawals approved successfully.";
+        } else {
+            throw new Exception("Failed to approve all pending withdrawals.");
+        }
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
     }
 }
 
 require_once 'includes/header.php';
+
 ?>
 
 <div class="container mt-4">
@@ -144,8 +156,8 @@ require_once 'includes/header.php';
                     <td><?php echo $withdrawal['user_id']; ?></td>
                     <td><?php echo htmlspecialchars($withdrawal['username']); ?></td>
                     <td><?php echo number_format($withdrawal['amount'], 2); ?></td>
-                    <td><?php echo $withdrawal['phone_number']; ?></td>
-                    <td><?php echo $withdrawal['status']; ?></td>
+                    <td><?php echo htmlspecialchars($withdrawal['phone_number']); ?></td>
+                    <td><?php echo htmlspecialchars($withdrawal['status']); ?></td>
                     <td><?php echo $withdrawal['request_date']; ?></td>
                     <td>
                         <form method="post">
@@ -161,24 +173,14 @@ require_once 'includes/header.php';
             <?php endforeach; ?>
         </tbody>
     </table>
-    
-    <div>
-        <form action="">
-            <div>
-                <label for="initial_depositt"">initial_depositt</label>
-                <input type="number" step="0.01"  id="initial_depositt" name="initial_depositt"  required>
-                <p><?php echo number_format($admin->getInitialDepositAmount(), 2); ?></p>
-                
-            </div>
-        </form>
-    </div>
 
     <!-- Set Initial Deposit -->
     <h3>Set Initial Deposit for Referral Earnings</h3>
     <form method="post">
         <div class="form-group">
             <label for="initial_deposit">Initial Deposit Amount (KES):</label>
-            <input type="number" step="0.01" class="form-control" id="initial_deposit" name="initial_deposit" value="<?php echo number_format($admin->getInitialDepositAmount(), 2); ?>" required>
+            <input type="number" step="0.01" class="form-control" id="initial_deposit" name="initial_deposit"
+                   value="<?php echo number_format($admin->getInitialDepositAmount(), 2); ?>" required>
         </div>
         <button type="submit" class="btn btn-primary" name="set_initial_deposit">Set Amount</button>
     </form>

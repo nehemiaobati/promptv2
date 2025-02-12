@@ -2,34 +2,62 @@
 
 require_once __DIR__ . '/config.php';
 
-// Establishes a PDO database connection
-function getPDOConnection() {
-    global $db_host, $db_user, $db_pass, $db_name;
+/**
+ * Establishes a PDO database connection.
+ *
+ * @return PDO The PDO connection object.
+ * @throws PDOException If the connection fails.
+ */
+function getPDOConnection(): PDO
+{
+    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Set default fetch mode
+    ];
+
     try {
-        $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        return $pdo;
+        return new PDO($dsn, DB_USER, DB_PASS, $options);
     } catch (PDOException $e) {
         error_log("Database connection failed: " . $e->getMessage());
-        die("Database connection failed. Please check logs.");
+        die("Database connection failed. Please check logs."); // Consider a friendlier error page in production
     }
 }
 
-// Sanitizes user input to prevent XSS
-function sanitizeInput($input) {
+/**
+ * Sanitizes user input to prevent XSS.
+ *
+ * @param string $input The input string to sanitize.
+ * @return string The sanitized string.
+ */
+function sanitizeInput(string $input): string
+{
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-// Validates Kenyan phone numbers (254...)
-function validatePhoneNumber($phone) {
+/**
+ * Validates Kenyan phone numbers (254...).
+ *
+ * @param string $phone The phone number to validate.
+ * @return string|false The validated phone number (254...) or false if invalid.
+ */
+function validatePhoneNumber(string $phone)
+{
     $phone = preg_replace('/[^0-9]/', '', $phone);
     return preg_match('/^254[0-9]{9}$/', $phone) ? $phone : false;
 }
 
-
-// Generates an M-Pesa API access token
-function generateMpesaAccessToken($consumerKey, $consumerSecret) {
+/**
+ * Generates an M-Pesa API access token.
+ *
+ * @param string $consumerKey The M-Pesa consumer key.
+ * @param string $consumerSecret The M-Pesa consumer secret.
+ * @return string|null The access token or null on failure.
+ */
+function generateMpesaAccessToken(string $consumerKey, string $consumerSecret): ?string
+{
     $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'; // Sandbox for testing
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -37,6 +65,13 @@ function generateMpesaAccessToken($consumerKey, $consumerSecret) {
     curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     $curl_response = curl_exec($curl);
+
+    if ($curl_response === false) {
+        error_log("M-Pesa token generation failed: " . curl_error($curl));  // Log the curl error
+        curl_close($curl);
+        return null;
+    }
+
     $response = json_decode($curl_response);
     curl_close($curl);
 
@@ -48,8 +83,21 @@ function generateMpesaAccessToken($consumerKey, $consumerSecret) {
     return null;
 }
 
-// Initiates an M-Pesa STK push
-function initiateMpesaSTKPush($accessToken, $businessShortcode,$businessShortcodet, $passkey, $amount, $phoneNumber, $accountReference, $transactionDesc) {
+/**
+ * Initiates an M-Pesa STK push.
+ *
+ * @param string $accessToken The M-Pesa access token.
+ * @param int $businessShortcode The business shortcode.
+ * @param int $businessShortcodet The  business shortcode target.
+ * @param string $passkey The passkey.
+ * @param float $amount The amount to charge.
+ * @param string $phoneNumber The phone number to charge (254...).
+ * @param string $accountReference The account reference.
+ * @param string $transactionDesc The transaction description.
+ * @return array|null The M-Pesa response or null on failure.
+ */
+function initiateMpesaSTKPush(string $accessToken, int $businessShortcode, int $businessShortcodet, string $passkey, float $amount, string $phoneNumber, string $accountReference, string $transactionDesc): ?array
+{
     $timestamp = date('YmdHis');
     $password = base64_encode($businessShortcode . $passkey . $timestamp);
 
@@ -67,7 +115,7 @@ function initiateMpesaSTKPush($accessToken, $businessShortcode,$businessShortcod
         'PartyA' => $phoneNumber,
         'PartyB' => $businessShortcodet,
         'PhoneNumber' => $phoneNumber,
-        'CallBackURL' => 'https://afrikenkid.com/confirmation/confirmation.php',
+        'CallBackURL' => MPESA_CALLBACK_URL,
         'AccountReference' => $accountReference,
         'TransactionDesc' => $transactionDesc
     ];
@@ -78,6 +126,13 @@ function initiateMpesaSTKPush($accessToken, $businessShortcode,$businessShortcod
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 
     $curl_response = curl_exec($curl);
+
+    if ($curl_response === false) {
+        error_log("M-Pesa STK push error: " . curl_error($curl));
+        curl_close($curl);
+        return null;
+    }
+
     $response = json_decode($curl_response, true);
     curl_close($curl);
 

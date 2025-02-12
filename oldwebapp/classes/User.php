@@ -1,13 +1,24 @@
 <?php
-class User {
-    private $pdo;
 
-    public function __construct($pdo) {
+class User
+{
+    private PDO $pdo; // Type hint the PDO object
+
+    public function __construct(PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    // existing code
-    public function register($username, $password) {
+    /**
+     * Registers a new user.
+     *
+     * @param string $username The username.
+     * @param string $password The password.
+     * @return bool True on success, false on failure.
+     * @throws Exception If registration fails.
+     */
+    public function register(string $username, string $password): bool
+    {
         if (empty($username) || empty($password)) {
             throw new Exception("Username and password are required.");
         }
@@ -20,15 +31,23 @@ class User {
 
         try {
             $stmt = $this->pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-            $stmt->execute([$username, $hashedPassword]);
-            return true;
+            return $stmt->execute([$username, $hashedPassword]); // Directly return the result of execute()
         } catch (PDOException $e) {
             error_log("Error creating user: " . $e->getMessage());
             throw new Exception("Error creating user.");
         }
     }
 
-    public function login($username, $password) {
+    /**
+     * Logs in an existing user.
+     *
+     * @param string $username The username.
+     * @param string $password The password.
+     * @return bool True on success, false on failure.
+     * @throws Exception If login fails.
+     */
+    public function login(string $username, string $password): bool
+    {
         if (empty($username) || empty($password)) {
             throw new Exception("Username and password are required.");
         }
@@ -37,11 +56,9 @@ class User {
             $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE username = ?");
             $stmt->execute([$username]);
 
-            if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($user = $stmt->fetch()) {
                 if (password_verify($password, $user['password'])) {
-                    // Regenerate session ID on login for security
-                    session_regenerate_id(true);
-
+                    session_regenerate_id(true); // Regenerate session ID on login for security
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
                     return true;
@@ -54,112 +71,185 @@ class User {
         }
     }
 
-    public function getBalance($userId) {
+    /**
+     * Gets the user's balance.
+     *
+     * @param int $userId The user ID.
+     * @return float The user's balance.
+     */
+    public function getBalance(int $userId): float
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT balance FROM users WHERE id = ?");
             $stmt->execute([$userId]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? $result['balance'] : 0;
+            $result = $stmt->fetch();
+            return $result ? (float)$result['balance'] : 0.00;
         } catch (PDOException $e) {
             error_log("Error fetching balance: " . $e->getMessage());
-            return 0; // Or handle the error appropriately
+            return 0.00; // Or handle the error appropriately
         }
     }
 
-    public function getReferralEarnings($userId) {
+    /**
+     * Gets the user's referral earnings.
+     *
+     * @param int $userId The user ID.
+     * @return float The user's referral earnings.
+     */
+    public function getReferralEarnings(int $userId): float
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT referral_earnings FROM users WHERE id = ?");
             $stmt->execute([$userId]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? $result['referral_earnings'] : 0;
+            $result = $stmt->fetch();
+            return $result ? (float)$result['referral_earnings'] : 0.00;
         } catch (PDOException $e) {
             error_log("Error fetching referral earnings: " . $e->getMessage());
-            return 0;
+            return 0.00;
         }
     }
 
-    public function getReferrals($userId) {
+    /**
+     * Gets the user's referrals.
+     *
+     * @param int $userId The user ID.
+     * @return array An array of the user's referrals.
+     */
+    public function getReferrals(int $userId): array
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT u.username, r.status FROM referrals r LEFT JOIN users u ON r.referred_id = u.id WHERE r.referrer_id = ? AND r.referral_tier = 1");
             $stmt->execute([$userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching referrals: " . $e->getMessage());
             return [];
         }
     }
 
-    public function addReferral($referrerId, $referredId, $referralTier) {
+    /**
+     * Adds a new referral.
+     *
+     * @param int $referrerId The ID of the referrer.
+     * @param int $referredId The ID of the referred user.
+     * @param int $referralTier The referral tier.
+     * @return bool True on success, false on failure.
+     */
+    public function addReferral(int $referrerId, int $referredId, int $referralTier): bool
+    {
         try {
             $stmt = $this->pdo->prepare("INSERT INTO referrals (referrer_id, referred_id, referral_tier) VALUES (?, ?, ?)");
-            $stmt->execute([$referrerId, $referredId, $referralTier]);
-            return true;
+            return $stmt->execute([$referrerId, $referredId, $referralTier]);
         } catch (PDOException $e) {
             error_log("Error adding referral: " . $e->getMessage());
             return false;
         }
     }
 
-    public function updateReferralStatus($referralId, $status) {
+    /**
+     * Updates the status of a referral.
+     *
+     * @param int $referralId The ID of the referral.
+     * @param string $status The new status.
+     * @return bool True on success, false on failure.
+     */
+    public function updateReferralStatus(int $referralId, string $status): bool
+    {
         try {
             $stmt = $this->pdo->prepare("UPDATE referrals SET status = ? WHERE id = ?");
-            $stmt->execute([$status, $referralId]);
-            return true;
+            return $stmt->execute([$status, $referralId]);
         } catch (PDOException $e) {
             error_log("Error updating referral status: " . $e->getMessage());
             return false;
         }
     }
 
-    public function addReferralEarnings($userId, $amount) {
+    /**
+     * Adds referral earnings to a user's account.
+     *
+     * @param int $userId The ID of the user.
+     * @param float $amount The amount of referral earnings to add.
+     * @return bool True on success, false on failure.
+     */
+    public function addReferralEarnings(int $userId, float $amount): bool
+    {
         try {
             $stmt = $this->pdo->prepare("UPDATE users SET referral_earnings = referral_earnings + ? WHERE id = ?");
-            $stmt->execute([$amount, $userId]);
-            return true;
+            return $stmt->execute([$amount, $userId]);
         } catch (PDOException $e) {
             error_log("Error adding referral earnings: " . $e->getMessage());
             return false;
         }
     }
 
-    public function requestWithdrawal($userId, $amount, $phoneNumber) {
+    /**
+     * Requests a withdrawal for a user.
+     *
+     * @param int $userId The ID of the user.
+     * @param float $amount The amount to withdraw.
+     * @param string $phoneNumber The phone number to send the withdrawal to.
+     * @return bool True on success, false on failure.
+     */
+    public function requestWithdrawal(int $userId, float $amount, string $phoneNumber): bool
+    {
         try {
             $stmt = $this->pdo->prepare("INSERT INTO withdrawals (user_id, amount, phone_number) VALUES (?, ?, ?)");
-            $stmt->execute([$userId, $amount, $phoneNumber]);
-            return true;
+            return $stmt->execute([$userId, $amount, $phoneNumber]);
         } catch (PDOException $e) {
             error_log("Error requesting withdrawal: " . $e->getMessage());
             return false;
         }
     }
 
-    public function getWithdrawalRequests($userId) {
+    /**
+     * Gets the withdrawal requests for a user.
+     *
+     * @param int $userId The ID of the user.
+     * @return array An array of the user's withdrawal requests.
+     */
+    public function getWithdrawalRequests(int $userId): array
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT * FROM withdrawals WHERE user_id = ? ORDER BY request_date DESC");
             $stmt->execute([$userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error fetching withdrawal requests: " . $e->getMessage());
             return [];
         }
     }
-    public function getInitialDepositAmount() {
+
+    /**
+     * Gets the initial deposit amount from the settings table.
+     *
+     * @return float The initial deposit amount.
+     */
+    public function getInitialDepositAmount(): float
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_name = 'initial_deposit'");
             $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (float)$result['setting_value'] : 0;
+            $result = $stmt->fetch();
+            return $result ? (float)$result['setting_value'] : 0.00;
         } catch (PDOException $e) {
             error_log("Error fetching initial deposit amount: " . $e->getMessage());
-            return 0;
+            return 0.00;
         }
     }
 
-    public function checkTransactionStatus($userId, $merchantRequestId) {
+    /**
+     * Checks the status of a transaction.
+     *
+     * @param int $userId The ID of the user.
+     * @param string $merchantRequestId The merchant request ID.
+     * @return string|null The status of the transaction, or null if not found.
+     */
+    public function checkTransactionStatus(int $userId, string $merchantRequestId): ?string
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT status FROM transactions WHERE user_id = ? AND merchant_request_id = ?");
             $stmt->execute([$userId, $merchantRequestId]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch();
             return $result ? $result['status'] : null;
         } catch (PDOException $e) {
             error_log("Error checking transaction status: " . $e->getMessage());
@@ -167,7 +257,15 @@ class User {
         }
     }
 
-    private function checkUsernameExists($username) {
+    /**
+     * Checks if a username already exists.
+     *
+     * @param string $username The username to check.
+     * @return bool True if the username exists, false otherwise.
+     * @throws Exception If there is an error checking the username.
+     */
+    private function checkUsernameExists(string $username): bool
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
             $stmt->execute([$username]);
@@ -178,9 +276,14 @@ class User {
         }
     }
 
-
-
-    public function processReferrals($userId) {
+    /**
+     * Processes referrals for a user.
+     *
+     * @param int $userId The ID of the user.
+     * @return void
+     */
+    public function processReferrals(int $userId): void
+    {
         $initialDepositAmount = $this->getInitialDepositAmount();
         $currentUserBalance = $this->getBalance($userId);
 
@@ -190,7 +293,7 @@ class User {
             // Get referral details for the current user (referred_id)
             $referralDetails = $this->pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
             $referralDetails->execute([$userId]);
-            $referral = $referralDetails->fetch(PDO::FETCH_ASSOC);
+            $referral = $referralDetails->fetch();
 
             if ($referral) {
                 // Referral exists (user was referred by someone)
@@ -213,7 +316,7 @@ class User {
                     // Check for a second-tier referrer
                     $secondTierReferrer = $this->pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'pending'");
                     $secondTierReferrer->execute([$referrerId]);
-                    $secondTierReferral = $secondTierReferrer->fetch(PDO::FETCH_ASSOC);
+                    $secondTierReferral = $secondTierReferrer->fetch();
 
                     if ($secondTierReferral) {
                         // Get the current balance of the second-tier referrer
@@ -239,7 +342,4 @@ class User {
             }
         }
     }
-    
-
-
 }

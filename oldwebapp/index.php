@@ -1,8 +1,4 @@
 <?php
-// Set session ini settings (if not set in php.ini)
-//ini_set('session.cookie_httponly', 1);
-//ini_set('session.use_only_cookies', 1);
-// ini_set('session.cookie_secure', 1); // Only if you have HTTPS
 
 require_once 'config.php';
 session_start();
@@ -16,6 +12,7 @@ $pdo = getPDOConnection();
 $user = new User($pdo);
 $payment = new Payment($pdo);
 $admin = new Admin($pdo);
+
 $errors = [];
 $success = "";
 
@@ -25,25 +22,21 @@ if (isset($_GET['logout'])) {
     header("Location: index.php");
     exit();
 }
-// Handle M-Pesa Callbacks
+
+// M-Pesa Callbacks (Process these *before* any output)
 $payment->processCallback();
-$payment->processB2CResultCallback(); //process b2c result callbacks
-$payment->processB2CTimeoutCallback(); //process b2c timeout callbacks
+$payment->processB2CResultCallback();
+$payment->processB2CTimeoutCallback();
+
 // Handle Signup
 if (isset($_POST['signup'])) {
     try {
-        // Check if a referral code was provided in the URL
         $referrerId = isset($_GET['ref']) ? (int)$_GET['ref'] : null;
-
         $user->register(sanitizeInput($_POST['username']), $_POST['password']);
-
-        // If registration is successful, log in the new user
         $user->login(sanitizeInput($_POST['username']), $_POST['password']);
 
-        // Add the referral if a referral code was used
         if ($referrerId) {
-            $referredId = $_SESSION['user_id']; // The newly registered user
-            $user->addReferral($referrerId, $referredId, 1); // Assuming direct referral (tier 1)
+            $user->addReferral($_SESSION['user_id'], $referrerId, 1); // Corrected order
         }
 
         $success = "Signup successful! Please sign in.";
@@ -57,11 +50,7 @@ if (isset($_POST['signin'])) {
     try {
         $user->login(sanitizeInput($_POST['username']), $_POST['password']);
         $success = "Sign in successful!";
-
-        // Process referrals after successful login
-        if (isset($_SESSION['user_id'])) {
-            $user->processReferrals($_SESSION['user_id']);
-        }
+        $user->processReferrals($_SESSION['user_id']);
 
     } catch (Exception $e) {
         $errors[] = $e->getMessage();
@@ -74,99 +63,34 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Handle Payment
-
-
-
-// Handle Payment
 if (isset($_POST['charge']) && isset($_SESSION['user_id'])) {
     try {
         $amount = (float)$_POST['amount'];
-        $phone = $_POST['phone'];
-        $userId = $_SESSION['user_id']; // User making the deposit
+        $phone = sanitizeInput($_POST['phone']); // Sanitize phone number
+        $userId = $_SESSION['user_id'];
 
-        // Get the initial deposit amount
-        $initialDepositAmount = $user->getInitialDepositAmount();
-
-        // Proceed with the STK push (initiate payment)
         $message = $payment->initiateSTKPush($userId, $amount, $phone);
-        $success = $message; // STK push initiated
+        $success = $message;
 
-        // Get the current balance of the user making the deposit
-        $currentUserBalance = $user->getBalance($userId);
-
-        // Check if the user making the deposit has met the initial deposit requirement
-        if ($currentUserBalance >= $initialDepositAmount) {
-
-            // Get referral details for the current user (referred_id)
-            $referralDetails = $pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
-            $referralDetails->execute([$userId]);
-            $referral = $referralDetails->fetch(PDO::FETCH_ASSOC);
-
-            if ($referral) {
-                // Referral exists (user was referred by someone)
-                $referrerId = $referral['referrer_id']; // First-tier referrer
-
-                // Get the current balance of the first-tier referrer
-                $referrerBalance = $user->getBalance($referrerId);
-
-                // Check if the first-tier referrer's balance is also equal to or greater than the initial deposit
-                if ($referrerBalance >= $initialDepositAmount) {
-
-                    // Update first-tier referral status to 'successful'
-                    $updateReferral = $pdo->prepare("UPDATE referrals SET status = 'successful' WHERE id = ?");
-                    $updateReferral->execute([$referral['id']]);
-
-                    // Calculate and add referral earnings (first tier)
-                    $referralEarnings = $initialDepositAmount * 0.3;
-                    $user->addReferralEarnings($referrerId, $referralEarnings);
-
-                    // Check for a second-tier referrer
-                    $secondTierReferrer = $pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'pending'");
-                    $secondTierReferrer->execute([$referrerId]);
-                    $secondTierReferral = $secondTierReferrer->fetch(PDO::FETCH_ASSOC);
-
-                    if ($secondTierReferral) {
-                        // Get the current balance of the second-tier referrer
-                        $secondTierReferrerId = $secondTierReferral['referrer_id'];
-                        $secondTierReferrerBalance = $user->getBalance($secondTierReferrerId);
-
-                        // Check if the second-tier referrer's balance is also equal to or greater than the initial deposit
-                        if ($secondTierReferrerBalance >= $initialDepositAmount) {
-
-                            // Add second-tier referral (tier 2)
-                            $user->addReferral($secondTierReferral['referrer_id'], $userId, 2);
-
-                            // Calculate and add referral earnings (second tier)
-                            $secondTierEarnings = $initialDepositAmount * 0.1;
-                            $user->addReferralEarnings($secondTierReferral['referrer_id'], $secondTierEarnings);
-
-                            // Update second-tier referral status to 'successful'
-                            $updateSecondTier = $pdo->prepare("UPDATE referrals SET status = 'successful' WHERE referred_id = ? AND referral_tier = 2");
-                            $updateSecondTier->execute([$userId]);
-                        }
-                    }
-                }
-            }
-        }
     } catch (Exception $e) {
         $errors[] = $e->getMessage();
     }
 }
 
-// ... (Rest of your index.php code) ...
-
-
 // Handle Withdrawal Request
 if (isset($_POST['withdraw']) && isset($_SESSION['user_id'])) {
     try {
         $amount = (float)$_POST['amount'];
-        $phone = $_POST['phone'];
+        $phone = sanitizeInput($_POST['phone']); // Sanitize phone number
+
         if ($amount <= 0) {
             throw new Exception("Invalid withdrawal amount.");
         }
+
         if ($amount > $user->getReferralEarnings($_SESSION['user_id'])) {
             throw new Exception("Insufficient referral earnings.");
         }
+
         $user->requestWithdrawal($_SESSION['user_id'], $amount, $phone);
         $success = "Withdrawal request submitted successfully.";
     } catch (Exception $e) {
@@ -175,6 +99,7 @@ if (isset($_POST['withdraw']) && isset($_SESSION['user_id'])) {
 }
 
 require_once 'includes/header.php';
+
 ?>
 
 <?php if (isset($_SESSION['username'])): ?>
