@@ -1,0 +1,1806 @@
+================================================
+File: README.md
+================================================
+# promptv2
+ referral
+
+
+================================================
+File: LICENSE
+================================================
+Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+================================================
+File: admin.php
+================================================
+<?php
+//ini_set('session.cookie_httponly', 1);
+//ini_set('session.use_only_cookies', 1);
+// ini_set('session.cookie_secure', 1); // Only if you have HTTPS
+
+require_once 'config.php';
+session_start();
+
+require_once 'functions.php';
+require_once 'classes/User.php';
+require_once 'classes/Payment.php';
+require_once 'classes/Admin.php';
+
+$pdo = getPDOConnection();
+$user = new User($pdo);
+$payment = new Payment($pdo);
+$admin = new Admin($pdo);
+$errors = [];
+$success = "";
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['user_id']) || !$admin->isAdmin($_SESSION['user_id'])) {
+    header("Location: index.php"); // Redirect to the login page
+    exit();
+}
+
+// Handle Set Initial Deposit
+if (isset($_POST['set_initial_deposit'])) {
+    $newInitialDeposit = (float)$_POST['initial_deposit'];
+    if ($newInitialDeposit > 0) {
+        if ($admin->setInitialDeposit($newInitialDeposit)) {
+            $success = "Initial deposit amount updated successfully.";
+        } else {
+            $errors[] = "Failed to update initial deposit amount.";
+        }
+    } else {
+        $errors[] = "Invalid initial deposit amount.";
+    }
+}
+
+// Handle Approve Withdrawal
+if (isset($_POST['approve_withdrawal'])) {
+    $withdrawalId = (int)$_POST['withdrawal_id'];
+    $userId = (int)$_POST['user_id'];
+    $amount = (float)$_POST['amount'];
+    $phoneNumber = $_POST['phone_number']; 
+    $message = $admin->approveWithdrawal($withdrawalId, $userId, $amount, $phoneNumber);
+    if (strpos($message, "Error") === 0) {
+        $errors[] = $message;
+    } else {
+        $success = $message;
+    }
+}
+
+// Handle Suspend Withdrawal
+if (isset($_POST['suspend_withdrawal'])) {
+    $withdrawalId = (int)$_POST['withdrawal_id'];
+    if ($admin->suspendWithdrawal($withdrawalId)) {
+        $success = "Withdrawal suspended successfully.";
+    } else {
+        $errors[] = "Failed to suspend withdrawal.";
+    }
+}
+
+// Handle Approve All Pending Withdrawals
+if (isset($_POST['approve_all_withdrawals'])) {
+    if ($admin->approveAllPendingWithdrawals()) {
+        $success = "All pending withdrawals approved successfully.";
+    } else {
+        $errors[] = "Failed to approve all pending withdrawals.";
+    }
+}
+
+require_once 'includes/header.php';
+?>
+
+<div class="container mt-4">
+    <h2>Admin Panel</h2>
+
+    <!-- Display Errors and Success Messages -->
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger mt-3">
+            <?php foreach ($errors as $error): ?>
+                <p><?php echo $error; ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success mt-3">
+            <?php echo $success; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- All Users -->
+    <h3>All Users</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Balance</th>
+                <th>Referral Earnings</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $users = $admin->getAllUsers();
+            foreach ($users as $user) : ?>
+                <tr>
+                    <td><?php echo $user['id']; ?></td>
+                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                    <td><?php echo number_format($user['balance'], 2); ?></td>
+                    <td><?php echo number_format($user['referral_earnings'], 2); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <!-- Pending Withdrawals -->
+    <h3>Pending Withdrawals</h3>
+    <form method="post">
+        <button type="submit" class="btn btn-success" name="approve_all_withdrawals">Approve All</button>
+    </form>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Amount</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Request Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $withdrawals = $admin->getPendingWithdrawals();
+            foreach ($withdrawals as $withdrawal) : ?>
+                <tr>
+                    <td><?php echo $withdrawal['id']; ?></td>
+                    <td><?php echo $withdrawal['user_id']; ?></td>
+                    <td><?php echo htmlspecialchars($withdrawal['username']); ?></td>
+                    <td><?php echo number_format($withdrawal['amount'], 2); ?></td>
+                    <td><?php echo $withdrawal['phone_number']; ?></td>
+                    <td><?php echo $withdrawal['status']; ?></td>
+                    <td><?php echo $withdrawal['request_date']; ?></td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="withdrawal_id" value="<?php echo $withdrawal['id']; ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $withdrawal['user_id']; ?>">
+                            <input type="hidden" name="amount" value="<?php echo $withdrawal['amount']; ?>">
+                            <input type="hidden" name="phone_number" value="<?php echo $withdrawal['phone_number']; ?>">
+                            <button type="submit" class="btn btn-success btn-sm" name="approve_withdrawal">Approve</button>
+                            <button type="submit" class="btn btn-danger btn-sm" name="suspend_withdrawal">Suspend</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    
+    <div>
+        <form action="">
+            <div>
+                <label for="initial_depositt"">initial_depositt</label>
+                <input type="number" step="0.01"  id="initial_depositt" name="initial_depositt"  required>
+                <p><?php echo number_format($admin->getInitialDepositAmount(), 2); ?></p>
+                
+            </div>
+        </form>
+    </div>
+
+    <!-- Set Initial Deposit -->
+    <h3>Set Initial Deposit for Referral Earnings</h3>
+    <form method="post">
+        <div class="form-group">
+            <label for="initial_deposit">Initial Deposit Amount (KES):</label>
+            <input type="number" step="0.01" class="form-control" id="initial_deposit" name="initial_deposit" value="<?php echo number_format($admin->getInitialDepositAmount(), 2); ?>" required>
+        </div>
+        <button type="submit" class="btn btn-primary" name="set_initial_deposit">Set Amount</button>
+    </form>
+</div>
+
+<?php require_once 'includes/footer.php'; ?>
+
+================================================
+File: config.php
+================================================
+<?php
+// Database configuration
+$db_host = "localhost";
+$db_user = "root"; // Or your database username
+$db_pass = "";     // Or your database password
+$db_name = "user_auth3";
+
+// M-Pesa API Configuration (Replace with your actual credentials)
+$mpesa_consumer_key    = "cnldxAMop1mdoGS4v1SYa8jTfZ3xsS7hGta9YFzx87yHWWGI"; 
+$mpesa_consumer_secret = "BH5GHoGd7aOIkw3sSudzpLXZV1HrfEwilA2WGux0WZXE4iJ5TAAvG8t6ZAa7X0Ph"; 
+$mpesa_business_shortcode = 174379; 
+$mpesa_business_shortcodet = 3164444;
+$mpesa_passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+$mpesa_callback_url = "https://afrikenkid.com/confirmation/confirmation.php"; // Update with your domain
+$mpesa_account_reference = "Payment";
+$mpesa_transaction_desc = "Payment";
+$confirmations_dir = __DIR__ . "/confirmation/";
+$b2cconfirmations_dir = __DIR__ . "/confirmation/b2cresult/";
+
+
+// Session Configuration (for enhanced security)
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1); // Only if you have HTTPS
+
+================================================
+File: functions.php
+================================================
+<?php
+
+require_once __DIR__ . '/config.php';
+
+// Establishes a PDO database connection
+function getPDOConnection() {
+    global $db_host, $db_user, $db_pass, $db_name;
+    try {
+        $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        return $pdo;
+    } catch (PDOException $e) {
+        error_log("Database connection failed: " . $e->getMessage());
+        die("Database connection failed. Please check logs.");
+    }
+}
+
+// Sanitizes user input to prevent XSS
+function sanitizeInput($input) {
+    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+}
+
+// Validates Kenyan phone numbers (254...)
+function validatePhoneNumber($phone) {
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+    return preg_match('/^254[0-9]{9}$/', $phone) ? $phone : false;
+}
+
+
+// Generates an M-Pesa API access token
+function generateMpesaAccessToken($consumerKey, $consumerSecret) {
+    $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'; // Sandbox for testing
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    $credentials = base64_encode($consumerKey . ':' . $consumerSecret);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    $curl_response = curl_exec($curl);
+    $response = json_decode($curl_response);
+    curl_close($curl);
+
+    if (isset($response->access_token)) {
+        return $response->access_token;
+    }
+
+    error_log("M-Pesa token generation failed: " . json_encode($response));
+    return null;
+}
+
+// Initiates an M-Pesa STK push
+function initiateMpesaSTKPush($accessToken, $businessShortcode,$businessShortcodet, $passkey, $amount, $phoneNumber, $accountReference, $transactionDesc) {
+    $timestamp = date('YmdHis');
+    $password = base64_encode($businessShortcode . $passkey . $timestamp);
+
+    $url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'; // Sandbox for testing
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization:Bearer ' . $accessToken]);
+
+    $curl_post_data = [
+        'BusinessShortCode' => $businessShortcode,
+        'Password' => $password,
+        'Timestamp' => $timestamp,
+        'TransactionType' => 'CustomerBuyGoodsOnline', // Or 'CustomerPayBillOnline'
+        'Amount' => $amount,
+        'PartyA' => $phoneNumber,
+        'PartyB' => $businessShortcodet,
+        'PhoneNumber' => $phoneNumber,
+        'CallBackURL' => 'https://afrikenkid.com/confirmation/confirmation.php',
+        'AccountReference' => $accountReference,
+        'TransactionDesc' => $transactionDesc
+    ];
+
+    $data_string = json_encode($curl_post_data);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+
+    $curl_response = curl_exec($curl);
+    $response = json_decode($curl_response, true);
+    curl_close($curl);
+
+    if ($response === null || !isset($response['ResponseCode'])) {
+        error_log("M-Pesa STK push error: Invalid response format.");
+        return null;
+    }
+
+    if ($response['ResponseCode'] != "0") {
+        error_log("M-Pesa STK push failed: " . json_encode($response));
+    }
+
+    return $response;
+}
+
+================================================
+File: index.php
+================================================
+<?php
+// Set session ini settings (if not set in php.ini)
+//ini_set('session.cookie_httponly', 1);
+//ini_set('session.use_only_cookies', 1);
+// ini_set('session.cookie_secure', 1); // Only if you have HTTPS
+
+require_once 'config.php';
+session_start();
+
+require_once 'functions.php';
+require_once 'classes/User.php';
+require_once 'classes/Payment.php';
+require_once 'classes/Admin.php';
+
+$pdo = getPDOConnection();
+$user = new User($pdo);
+$payment = new Payment($pdo);
+$admin = new Admin($pdo);
+$errors = [];
+$success = "";
+
+// Handle Logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+    exit();
+}
+// Handle M-Pesa Callbacks
+$payment->processCallback();
+$payment->processB2CResultCallback(); //process b2c result callbacks
+$payment->processB2CTimeoutCallback(); //process b2c timeout callbacks
+// Handle Signup
+if (isset($_POST['signup'])) {
+    try {
+        // Check if a referral code was provided in the URL
+        $referrerId = isset($_GET['ref']) ? (int)$_GET['ref'] : null;
+
+        $user->register(sanitizeInput($_POST['username']), $_POST['password']);
+
+        // If registration is successful, log in the new user
+        $user->login(sanitizeInput($_POST['username']), $_POST['password']);
+
+        // Add the referral if a referral code was used
+        if ($referrerId) {
+            $referredId = $_SESSION['user_id']; // The newly registered user
+            $user->addReferral($referrerId, $referredId, 1); // Assuming direct referral (tier 1)
+        }
+
+        $success = "Signup successful! Please sign in.";
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
+    }
+}
+
+// Handle Signin
+if (isset($_POST['signin'])) {
+    try {
+        $user->login(sanitizeInput($_POST['username']), $_POST['password']);
+        $success = "Sign in successful!";
+
+        // Process referrals after successful login
+        if (isset($_SESSION['user_id'])) {
+            $user->processReferrals($_SESSION['user_id']);
+        }
+
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
+    }
+}
+
+// Set Admin Status in Session
+if (isset($_SESSION['user_id'])) {
+    $_SESSION['is_admin'] = $admin->isAdmin($_SESSION['user_id']);
+}
+
+// Handle Payment
+
+
+
+// Handle Payment
+if (isset($_POST['charge']) && isset($_SESSION['user_id'])) {
+    try {
+        $amount = (float)$_POST['amount'];
+        $phone = $_POST['phone'];
+        $userId = $_SESSION['user_id']; // User making the deposit
+
+        // Get the initial deposit amount
+        $initialDepositAmount = $user->getInitialDepositAmount();
+
+        // Proceed with the STK push (initiate payment)
+        $message = $payment->initiateSTKPush($userId, $amount, $phone);
+        $success = $message; // STK push initiated
+
+        // Get the current balance of the user making the deposit
+        $currentUserBalance = $user->getBalance($userId);
+
+        // Check if the user making the deposit has met the initial deposit requirement
+        if ($currentUserBalance >= $initialDepositAmount) {
+
+            // Get referral details for the current user (referred_id)
+            $referralDetails = $pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
+            $referralDetails->execute([$userId]);
+            $referral = $referralDetails->fetch(PDO::FETCH_ASSOC);
+
+            if ($referral) {
+                // Referral exists (user was referred by someone)
+                $referrerId = $referral['referrer_id']; // First-tier referrer
+
+                // Get the current balance of the first-tier referrer
+                $referrerBalance = $user->getBalance($referrerId);
+
+                // Check if the first-tier referrer's balance is also equal to or greater than the initial deposit
+                if ($referrerBalance >= $initialDepositAmount) {
+
+                    // Update first-tier referral status to 'successful'
+                    $updateReferral = $pdo->prepare("UPDATE referrals SET status = 'successful' WHERE id = ?");
+                    $updateReferral->execute([$referral['id']]);
+
+                    // Calculate and add referral earnings (first tier)
+                    $referralEarnings = $initialDepositAmount * 0.3;
+                    $user->addReferralEarnings($referrerId, $referralEarnings);
+
+                    // Check for a second-tier referrer
+                    $secondTierReferrer = $pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'pending'");
+                    $secondTierReferrer->execute([$referrerId]);
+                    $secondTierReferral = $secondTierReferrer->fetch(PDO::FETCH_ASSOC);
+
+                    if ($secondTierReferral) {
+                        // Get the current balance of the second-tier referrer
+                        $secondTierReferrerId = $secondTierReferral['referrer_id'];
+                        $secondTierReferrerBalance = $user->getBalance($secondTierReferrerId);
+
+                        // Check if the second-tier referrer's balance is also equal to or greater than the initial deposit
+                        if ($secondTierReferrerBalance >= $initialDepositAmount) {
+
+                            // Add second-tier referral (tier 2)
+                            $user->addReferral($secondTierReferral['referrer_id'], $userId, 2);
+
+                            // Calculate and add referral earnings (second tier)
+                            $secondTierEarnings = $initialDepositAmount * 0.1;
+                            $user->addReferralEarnings($secondTierReferral['referrer_id'], $secondTierEarnings);
+
+                            // Update second-tier referral status to 'successful'
+                            $updateSecondTier = $pdo->prepare("UPDATE referrals SET status = 'successful' WHERE referred_id = ? AND referral_tier = 2");
+                            $updateSecondTier->execute([$userId]);
+                        }
+                    }
+                }
+            }
+        }
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
+    }
+}
+
+// ... (Rest of your index.php code) ...
+
+
+// Handle Withdrawal Request
+if (isset($_POST['withdraw']) && isset($_SESSION['user_id'])) {
+    try {
+        $amount = (float)$_POST['amount'];
+        $phone = $_POST['phone'];
+        if ($amount <= 0) {
+            throw new Exception("Invalid withdrawal amount.");
+        }
+        if ($amount > $user->getReferralEarnings($_SESSION['user_id'])) {
+            throw new Exception("Insufficient referral earnings.");
+        }
+        $user->requestWithdrawal($_SESSION['user_id'], $amount, $phone);
+        $success = "Withdrawal request submitted successfully.";
+    } catch (Exception $e) {
+        $errors[] = $e->getMessage();
+    }
+}
+
+require_once 'includes/header.php';
+?>
+
+<?php if (isset($_SESSION['username'])): ?>
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+        <p class="lead">Current Balance: KES <?php echo number_format($user->getBalance($_SESSION['user_id']), 2); ?></p>
+        <p class="lead">Referral Earnings: KES <?php echo number_format($user->getReferralEarnings($_SESSION['user_id']), 2); ?></p>
+
+        <!-- Referral Link -->
+        <p class="mt-3">Your Referral Link: <span class="text-primary"><?php echo "https://your-domain.com/index.php?ref=" . $_SESSION['user_id']; ?></span></p>
+
+        <!-- Payment Form -->
+        <form method="post" class="mt-4">
+            <div class="form-group">
+                <label for="amount">Amount (KES):</label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number (254...):</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <button type="submit" class="btn btn-success" name="charge">Make Payment</button>
+        </form>
+        <!-- Withdrawal Form -->
+        <h3 class="mt-5">Withdraw Referral Earnings</h3>
+        <form method="post" class="mt-4">
+            <div class="form-group">
+                <label for="withdraw_amount">Amount (KES):</label>
+                <input type="number" step="0.01" class="form-control" id="withdraw_amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number (254...):</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <button type="submit" class="btn btn-success" name="withdraw">Request Withdrawal</button>
+        </form>
+
+        <!-- Display Withdrawal Requests -->
+        <h3 class="mt-5">Withdrawal Requests</h3>
+        <?php
+        $withdrawals = $user->getWithdrawalRequests($_SESSION['user_id']);
+        if (count($withdrawals) > 0) : ?>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Request Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($withdrawals as $withdrawal) : ?>
+                        <tr>
+                            <td><?php echo number_format($withdrawal['amount'], 2); ?></td>
+                            <td><?php echo $withdrawal['status']; ?></td>
+                            <td><?php echo $withdrawal['request_date']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <p>No withdrawal requests found.</p>
+        <?php endif; ?>
+        <!-- Display Referrals -->
+        <h3 class="mt-5">Your Referrals</h3>
+        <?php
+        $referrals = $user->getReferrals($_SESSION['user_id']);
+        if (count($referrals) > 0) : ?>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($referrals as $referral) : ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($referral['username']); ?></td>
+                            <td><?php echo $referral['status']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <p>No referrals found.</p>
+        <?php endif; ?>
+    </div>
+<?php else: ?>
+    <!-- Signup/Signin Form -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-container">
+                <h2 class="text-center mb-4">Sign Up</h2>
+                <form method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" name="signup">Sign Up</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-container">
+                <h2 class="text-center mb-4">Sign In</h2>
+                <form method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block" name="signin">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<!-- Display Errors and Success Messages -->
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger mt-3">
+        <?php foreach ($errors as $error): ?>
+            <p><?php echo $error; ?></p>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($success)): ?>
+    <div class="alert alert-success mt-3">
+        <?php echo $success; ?>
+    </div>
+<?php endif; ?>
+
+<?php require_once 'includes/footer.php'; ?>
+
+================================================
+File: use_auth.sql
+================================================
+-- Users Table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    balance DECIMAL(10, 2) DEFAULT 0.00,
+    referral_earnings DECIMAL(10,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_username ON users(username);
+
+-- Transactions Table
+CREATE TABLE transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    merchant_request_id VARCHAR(255) NOT NULL,
+    checkout_request_id VARCHAR(255) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    mpesa_receipt_number VARCHAR(255),
+    status VARCHAR(50) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX idx_merchant_request_id ON transactions(merchant_request_id);
+
+-- Referrals Table
+CREATE TABLE referrals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    referrer_id INT NOT NULL,
+    referred_id INT NOT NULL,
+    status ENUM('pending', 'successful') DEFAULT 'pending',
+    referral_tier INT NOT NULL , -- 1 (direct), 2 (indirect)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (referrer_id) REFERENCES users(id),
+    FOREIGN KEY (referred_id) REFERENCES users(id),
+    UNIQUE KEY unique_referral (referrer_id, referred_id)
+);
+-- Add indexes for performance
+CREATE INDEX idx_referrer_id ON referrals(referrer_id);
+CREATE INDEX idx_referred_id ON referrals(referred_id);
+
+-- Withdrawals Table
+CREATE TABLE withdrawals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    transaction_id VARCHAR(255),
+    amount DECIMAL(10, 2) NOT NULL,
+    phone_number VARCHAR(255) NOT NULL,
+    status ENUM('pending', 'approved', 'failed') DEFAULT 'pending',
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Settings Table
+CREATE TABLE settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_name VARCHAR(255) NOT NULL UNIQUE,
+    setting_value VARCHAR(255)
+);
+
+-- Initial Settings
+INSERT INTO settings (setting_name, setting_value) VALUES ('initial_deposit', '50');
+
+================================================
+File: classes/Admin.php
+================================================
+<?php
+class Admin {
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+
+    public function isAdmin($userId) {
+        // Simple check - you might have a separate 'admins' table or a role in 'users'
+        return $userId == 1; // Assuming admin has ID 1 in the 'users' table
+    }
+
+    public function getAllUsers() {
+        try {
+            $stmt = $this->pdo->query("SELECT id, username, balance, referral_earnings FROM users");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching all users: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getPendingWithdrawals() {
+        try {
+            $stmt = $this->pdo->query("SELECT w.id, w.user_id, w.amount,w.phone_number, w.status, w.request_date, u.username FROM withdrawals w JOIN users u ON w.user_id = u.id WHERE w.status = 'pending' ORDER BY w.request_date ASC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching pending withdrawals: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function approveWithdrawal($withdrawalId, $userId, $amount, $phoneNumber) {
+        try {
+            // Initiate B2C payment
+            $payment = new Payment($this->pdo);
+            $b2cResult = $payment->initiateB2CWithdrawal($userId, $amount, $phoneNumber);
+            // Check if B2C was initiated successfully
+            if (isset($b2cResult['ConversationID'])) {
+                // Update withdrawal record with transaction_id from B2C response
+                $stmt = $this->pdo->prepare("UPDATE withdrawals SET transaction_id = ? WHERE id = ?");
+                $stmt->execute([$b2cResult['OriginatorConversationID'], $withdrawalId]);
+
+                return "Withdrawal initiated successfully. Conversation ID: " . $b2cResult['ConversationID'];
+            } else {
+                // Handle case where B2C initiation failed
+                return "Failed to initiate B2C withdrawal.";
+            }
+        } catch (Exception $e) {
+            error_log("Error approving withdrawal: " . $e->getMessage());
+            return "Error processing withdrawal request.";
+        }
+    }
+
+    public function suspendWithdrawal($withdrawalId) {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'failed' WHERE id = ?");
+            $stmt->execute([$withdrawalId]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error updating withdrawal status: " . $e->getMessage());
+            return false;
+        }
+    }
+     public function approveAllPendingWithdrawals() {
+         $this->pdo->beginTransaction();
+         try {
+             $pendingWithdrawals = $this->getPendingWithdrawals();
+             foreach ($pendingWithdrawals as $withdrawal) {
+                 $phoneNumber = $withdrawal['phone_number']; 
+                 $result = $this->approveWithdrawal($withdrawal['id'], $withdrawal['user_id'], $withdrawal['amount'], $phoneNumber);
+                if (!$result) {
+                     throw new Exception("Failed to approve withdrawal ID: " . $withdrawal['id']);
+                 }
+             }
+             $this->pdo->commit();
+             return true;
+         } catch (Exception $e) {
+             $this->pdo->rollBack();
+             error_log("Error approving all withdrawals: " . $e->getMessage());
+             return false;
+         }
+     }
+
+    public function setInitialDeposit($amount) {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_name = 'initial_deposit'");
+            $stmt->execute([$amount]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error setting initial deposit: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getInitialDepositAmount() {
+        try {
+            $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_name = 'initial_deposit'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? (float)$result['setting_value'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error fetching initial deposit amount: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+}
+
+================================================
+File: classes/Payment.php
+================================================
+<?php
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../functions.php';
+
+class Payment {
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+
+    public function initiateSTKPush($userId, $amount, $phone) {
+        global $mpesa_consumer_key, $mpesa_consumer_secret, $mpesa_business_shortcode,$mpesa_business_shortcodet, $mpesa_passkey, $mpesa_account_reference, $mpesa_transaction_desc;
+
+        if ($amount <= 0) {
+            throw new Exception("Invalid amount.");
+        }
+
+        $phone = validatePhoneNumber($phone);
+        if (!$phone) {
+            throw new Exception("Invalid phone number.");
+        }
+
+        $accessToken = generateMpesaAccessToken($mpesa_consumer_key, $mpesa_consumer_secret);
+        if (!$accessToken) {
+            throw new Exception("Failed to generate M-Pesa access token.");
+        }
+
+        $mpesaResponse = initiateMpesaSTKPush($accessToken, $mpesa_business_shortcode,$mpesa_business_shortcodet, $mpesa_passkey, $amount, $phone, $mpesa_account_reference, $mpesa_transaction_desc);
+
+        if (isset($mpesaResponse['ResponseCode']) && $mpesaResponse['ResponseCode'] == "0") {
+            $merchantRequestID = $mpesaResponse['MerchantRequestID'];
+            $checkoutRequestID = $mpesaResponse['CheckoutRequestID'];
+
+            try {
+                $stmt = $this->pdo->prepare("INSERT INTO transactions (user_id, merchant_request_id, checkout_request_id, amount, status) VALUES (?, ?, ?, ?, 'pending')");
+                $stmt->execute([$userId, $merchantRequestID, $checkoutRequestID, $amount]);
+                return "M-Pesa STK push initiated. Please complete the payment on your phone.";
+            } catch (PDOException $e) {
+                error_log("Error saving transaction: " . $e->getMessage());
+                throw new Exception("Error saving transaction.");
+            }
+        } else {
+            throw new Exception("M-Pesa STK push failed. Please try again.");
+        }
+    }
+    public function processCallback() {
+       global $confirmations_dir;
+        // Get all JSON files in confirmations directory
+         $files = glob($confirmations_dir . "*.json");
+         // Process each file
+         foreach ($files as $file) {
+             $json_data = file_get_contents($file);
+            // Decode the JSON data into a PHP associative array
+             $data = json_decode($json_data, true);
+             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                 continue;
+              }
+              if (isset($data['Body']['stkCallback'])) {
+                 $stkCallback = $data['Body']['stkCallback'];
+                 $merchantRequestID = $stkCallback['MerchantRequestID'];
+                 $resultCode = $stkCallback['ResultCode'];
+
+                 if ($resultCode == 0) {
+                     // Payment successful
+                     $mpesaReceiptNumber = null;
+                     if (isset($stkCallback['CallbackMetadata']['Item'])) {
+                         foreach ($stkCallback['CallbackMetadata']['Item'] as $item) {
+                             if ($item['Name'] == 'MpesaReceiptNumber') {
+                                 $mpesaReceiptNumber = $item['Value'];
+                                 break;
+                             }
+                         }
+                     }
+
+                     try {
+                         $this->pdo->beginTransaction();
+
+                         // Update transaction status
+                         $stmt = $this->pdo->prepare("UPDATE transactions SET mpesa_receipt_number = ?, status = 'success' WHERE merchant_request_id = ?");
+                         $stmt->execute([$mpesaReceiptNumber, $merchantRequestID]);
+
+                         // Get transaction details
+                         $stmt = $this->pdo->prepare("SELECT amount, user_id FROM transactions WHERE merchant_request_id = ?");
+                         $stmt->execute([$merchantRequestID]);
+                         $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
+                         $amount = $transaction['amount'];
+                         $userId = $transaction['user_id'];
+
+                         // Update user balance
+                         $stmt = $this->pdo->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
+                         $stmt->execute([$amount, $userId]);
+
+                         $this->pdo->commit();
+
+                         // Delete the processed JSON file
+                         unlink($file);
+                     } catch (PDOException $e) {
+                         $this->pdo->rollBack();
+                         error_log("Error processing M-Pesa callback: " . $e->getMessage());
+                     }
+                 } else {
+                     // Payment failed
+                     try {
+                         // Update transaction status
+                         $stmt = $this->pdo->prepare("UPDATE transactions SET status = 'failed' WHERE merchant_request_id = ?");
+                         $stmt->execute([$merchantRequestID]);
+
+                         // Delete the processed JSON file
+                         unlink($file);
+                     } catch (PDOException $e) {
+                         error_log("Error processing M-Pesa callback: " . $e->getMessage());
+                     }
+                 }
+             }
+         }
+     }
+    public function initiateB2CWithdrawal($userId, $amount, $phoneNumber) {
+        global $mpesa_consumer_key, $mpesa_consumer_secret,$mpesa_business_shortcode,$mpesa_passkey;
+        $accessToken = generateMpesaAccessToken($mpesa_consumer_key, $mpesa_consumer_secret);
+        if (!$accessToken) {
+            throw new Exception("Failed to generate M-Pesa access token.");
+        }
+        $shortcode = $mpesa_business_shortcode;
+        $curl = curl_init();
+        $timestamp = date('YmdHis');
+        $password = base64_encode($shortcode . $mpesa_passkey . $timestamp);
+        $transactionRef = "TR" . $timestamp . "_" . $userId; // Unique transaction reference
+
+        curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL => 'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest', // Sandbox URL
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $accessToken
+                ),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode(
+                    array(
+                        'InitiatorName' => 'testapi',
+                        'SecurityCredential' => 'EsJocK7+NjqZPC3I3EO+TbvS+xVb9TymWwaKABoaZr/Z/n0UysSs..', // Use your security credential
+                        'CommandID' => 'BusinessPayment',
+                        'Amount' => $amount,
+                        'PartyA' => $mpesa_business_shortcode,
+                        'PartyB' => $phoneNumber,
+                        'Remarks' => 'Referral Earnings Withdrawal',
+                        'QueueTimeOutURL' => 'https://afrikenkid.com/confirmation/b2ctimeout.php',
+                        'ResultURL' => 'https://afrikenkid.com/confirmation/b2cresult.php', // Update to your domain
+                        'Occasion' => 'Referral Withdrawal',
+                        'OriginatorConversationID' => $transactionRef
+                    )
+                )
+            )
+        );
+
+        $response = curl_exec($curl);
+
+        if ($response === false) {
+            $error = curl_error($curl);
+            curl_close($curl);
+            throw new Exception("B2C API request failed: " . $error);
+        }
+        $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        $decodedResponse = json_decode($response, true);
+        if ($responseCode != 200 || (isset($decodedResponse['ResponseCode']) && $decodedResponse['ResponseCode'] != "0")) {
+            error_log("B2C API request failed: " . $response);
+            throw new Exception("Failed to initiate B2C withdrawal. Error code: " . $responseCode . ", Response: " . $response);
+        }
+        
+        return array(
+            'ConversationID' => $decodedResponse['ConversationID'],
+            'OriginatorConversationID' => $decodedResponse['OriginatorConversationID'],
+             'ResponseDescription' => $decodedResponse['ResponseDescription']
+        );
+    }
+ 
+ 
+
+    
+    // ... (initiateSTKPush, processCallback, initiateB2CWithdrawal, processB2CTimeoutCallback - these methods remain unchanged) ...
+     
+    public function processB2CResultCallback() {
+        global $b2cconfirmations_dir;
+        // Get all JSON files in confirmations directory
+        $files = glob($b2cconfirmations_dir . "*.json");
+        // Process each file
+        foreach ($files as $file) {
+            $json_data = file_get_contents($file);
+            // Decode the JSON data into a PHP associative array
+            $data = json_decode($json_data, true);
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                continue;
+            }
+            if (isset($data['Result'])) {
+                $result = $data['Result'];
+                $resultType = $result['ResultType'];
+                $resultCode = $result['ResultCode'];
+                $originatorConversationID = $result['OriginatorConversationID'];
+
+                if ($resultCode == 0 && $resultType == 0) {
+                    // B2C Payment successful
+                    try {
+                        $this->pdo->beginTransaction();
+
+                        // Update withdrawal status to 'approved'
+                        $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'approved', transaction_id = ? WHERE transaction_id = ?");
+                        $stmt->execute([$result['TransactionID'], $originatorConversationID]);
+
+                        // Find user_id by transaction_id (OriginatorConversationID)
+                        $stmt = $this->pdo->prepare("SELECT user_id, amount FROM withdrawals WHERE transaction_id = ?");
+                        $stmt->execute([$originatorConversationID]);
+                        $withdrawal = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $userId = $withdrawal['user_id'];
+                        $amount = $withdrawal['amount'];
+
+                        // Deduct the withdrawn amount from referral_earnings
+                        $stmt = $this->pdo->prepare("UPDATE users SET referral_earnings = referral_earnings - ? WHERE id = ?");
+                        $stmt->execute([$amount, $userId]);
+
+                        $this->pdo->commit();
+
+                        // Delete the processed JSON file
+                        unlink($file);
+                    } catch (PDOException $e) {
+                        $this->pdo->rollBack();
+                        error_log("Error processing B2C result callback: " . $e->getMessage());
+                    }
+                } else {
+                    // B2C Payment failed - update withdrawal status to 'failed'
+                    try {
+                        // Update withdrawal status to 'failed'
+                        $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'failed' WHERE transaction_id = ?");
+                        $stmt->execute([$originatorConversationID]);
+
+                        // Delete the processed JSON file
+                        unlink($file);
+                    } catch (PDOException $e) {
+                        error_log("Error processing B2C result callback: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+    }
+    public function processB2CTimeoutCallback() {
+         global $confirmations_dir;
+         // Get all JSON files in confirmations directory
+         $files = glob($confirmations_dir . "*.json");
+         // Process each file
+         foreach ($files as $file) {
+             $json_data = file_get_contents($file);
+             // Decode the JSON data into a PHP associative array
+             $data = json_decode($json_data, true);
+             if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                 continue;
+              }
+              if (isset($data['Result'])) {
+                 $result = $data['Result'];
+                 $resultType = $result['ResultType'];
+                 $resultCode = $result['ResultCode'];
+                 $originatorConversationID = $result['OriginatorConversationID'];
+                // B2C Payment failed - update withdrawal status to 'failed'
+                 try {
+                     // Update withdrawal status to 'failed'
+                     $stmt = $this->pdo->prepare("UPDATE withdrawals SET status = 'failed' WHERE transaction_id = ?");
+                     $stmt->execute([$originatorConversationID]);
+
+                     // Delete the processed JSON file
+                     unlink($file);
+                 } catch (PDOException $e) {
+                     error_log("Error processing B2C result callback: " . $e->getMessage());
+                 }
+             }
+         }
+     }
+}
+
+================================================
+File: classes/User.php
+================================================
+<?php
+class User {
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+
+    // existing code
+    public function register($username, $password) {
+        if (empty($username) || empty($password)) {
+            throw new Exception("Username and password are required.");
+        }
+
+        if ($this->checkUsernameExists($username)) {
+            throw new Exception("Username already taken.");
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+            $stmt->execute([$username, $hashedPassword]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error creating user: " . $e->getMessage());
+            throw new Exception("Error creating user.");
+        }
+    }
+
+    public function login($username, $password) {
+        if (empty($username) || empty($password)) {
+            throw new Exception("Username and password are required.");
+        }
+
+        try {
+            $stmt = $this->pdo->prepare("SELECT id, password FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+
+            if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (password_verify($password, $user['password'])) {
+                    // Regenerate session ID on login for security
+                    session_regenerate_id(true);
+
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $username;
+                    return true;
+                }
+            }
+            throw new Exception("Invalid username or password.");
+        } catch (PDOException $e) {
+            error_log("Error logging in: " . $e->getMessage());
+            throw new Exception("Error logging in.");
+        }
+    }
+
+    public function getBalance($userId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT balance FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['balance'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error fetching balance: " . $e->getMessage());
+            return 0; // Or handle the error appropriately
+        }
+    }
+
+    public function getReferralEarnings($userId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT referral_earnings FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['referral_earnings'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error fetching referral earnings: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    public function getReferrals($userId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT u.username, r.status FROM referrals r LEFT JOIN users u ON r.referred_id = u.id WHERE r.referrer_id = ? AND r.referral_tier = 1");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching referrals: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function addReferral($referrerId, $referredId, $referralTier) {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO referrals (referrer_id, referred_id, referral_tier) VALUES (?, ?, ?)");
+            $stmt->execute([$referrerId, $referredId, $referralTier]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error adding referral: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateReferralStatus($referralId, $status) {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE referrals SET status = ? WHERE id = ?");
+            $stmt->execute([$status, $referralId]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error updating referral status: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addReferralEarnings($userId, $amount) {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE users SET referral_earnings = referral_earnings + ? WHERE id = ?");
+            $stmt->execute([$amount, $userId]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error adding referral earnings: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function requestWithdrawal($userId, $amount, $phoneNumber) {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO withdrawals (user_id, amount, phone_number) VALUES (?, ?, ?)");
+            $stmt->execute([$userId, $amount, $phoneNumber]);
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error requesting withdrawal: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getWithdrawalRequests($userId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM withdrawals WHERE user_id = ? ORDER BY request_date DESC");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching withdrawal requests: " . $e->getMessage());
+            return [];
+        }
+    }
+    public function getInitialDepositAmount() {
+        try {
+            $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_name = 'initial_deposit'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? (float)$result['setting_value'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error fetching initial deposit amount: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    public function checkTransactionStatus($userId, $merchantRequestId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT status FROM transactions WHERE user_id = ? AND merchant_request_id = ?");
+            $stmt->execute([$userId, $merchantRequestId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['status'] : null;
+        } catch (PDOException $e) {
+            error_log("Error checking transaction status: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function checkUsernameExists($username) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            return $stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            error_log("Error checking username: " . $e->getMessage());
+            throw new Exception("Error checking username.");
+        }
+    }
+
+
+
+    public function processReferrals($userId) {
+        $initialDepositAmount = $this->getInitialDepositAmount();
+        $currentUserBalance = $this->getBalance($userId);
+
+        // Check if the user making the deposit has met the initial deposit requirement
+        if ($currentUserBalance >= $initialDepositAmount) {
+
+            // Get referral details for the current user (referred_id)
+            $referralDetails = $this->pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
+            $referralDetails->execute([$userId]);
+            $referral = $referralDetails->fetch(PDO::FETCH_ASSOC);
+
+            if ($referral) {
+                // Referral exists (user was referred by someone)
+                $referrerId = $referral['referrer_id']; // First-tier referrer
+
+                // Get the current balance of the first-tier referrer
+                $referrerBalance = $this->getBalance($referrerId);
+
+                // Check if the first-tier referrer's balance is also equal to or greater than the initial deposit
+                if ($referrerBalance >= $initialDepositAmount) {
+
+                    // Update first-tier referral status to 'successful'
+                    $updateReferral = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE id = ?");
+                    $updateReferral->execute([$referral['id']]);
+
+                    // Calculate and add referral earnings (first tier)
+                    $referralEarnings = $initialDepositAmount * 0.3;
+                    $this->addReferralEarnings($referrerId, $referralEarnings);
+
+                    // Check for a second-tier referrer
+                    $secondTierReferrer = $this->pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'pending'");
+                    $secondTierReferrer->execute([$referrerId]);
+                    $secondTierReferral = $secondTierReferrer->fetch(PDO::FETCH_ASSOC);
+
+                    if ($secondTierReferral) {
+                        // Get the current balance of the second-tier referrer
+                        $secondTierReferrerId = $secondTierReferral['referrer_id'];
+                        $secondTierReferrerBalance = $this->getBalance($secondTierReferrerId);
+
+                        // Check if the second-tier referrer's balance is also equal to or greater than the initial deposit
+                        if ($secondTierReferrerBalance >= $initialDepositAmount) {
+
+                            // Add second-tier referral (tier 2)
+                            $this->addReferral($secondTierReferral['referrer_id'], $userId, 2);
+
+                            // Calculate and add referral earnings (second tier)
+                            $secondTierEarnings = $initialDepositAmount * 0.1;
+                            $this->addReferralEarnings($secondTierReferral['referrer_id'], $secondTierEarnings);
+
+                            // Update second-tier referral status to 'successful'
+                            $updateSecondTier = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE referred_id = ? AND referral_tier = 2");
+                            $updateSecondTier->execute([$userId]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+
+
+}
+
+================================================
+File: confirmation/confirmation.php
+================================================
+<?php
+// Set the content type to JSON for the response
+header('Content-Type: application/json');
+
+// Handle only POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Get the JSON data from the request body
+    $json_data = file_get_contents('php://input');
+
+    // Decode the JSON data into a PHP associative array
+    $data = json_decode($json_data, true);
+
+    // Check if JSON decoding was successful
+    if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+        // JSON decoding failed
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Invalid JSON data']);
+        exit;
+    }
+
+    // Generate a unique filename based on the current timestamp
+    $timestamp = time();
+    $filename = "request_" . $timestamp . ".json";
+    $filePath = __DIR__ . "/" . $filename; // Store files in the same directory as the PHP script
+
+    // Write JSON data to file
+    if(file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
+        // Log the file creation (optional)
+        file_put_contents("log_file_creation.log", "File $filename created at: ". date("Y-m-d H:i:s"). PHP_EOL, FILE_APPEND);
+
+           // Example response
+          $response = [
+              'status' => 'success',
+              'message' => 'Data received and stored',
+              'file' => $filename,
+          ];
+        }
+     else{
+           // Failed to create the file
+          http_response_code(500); // Internal Server Error
+          $response = [
+              'status' => 'error',
+              'message' => 'Failed to store data on the server',
+          ];
+       }
+    // Send a JSON response back to the client
+    echo json_encode($response);
+} else {
+    // Not a POST request
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Method not allowed']);
+}
+?>
+
+================================================
+File: confirmation/b2cresult/b2cresult.php
+================================================
+<?php
+// Set the content type to JSON for the response
+header('Content-Type: application/json');
+
+// Handle only POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Get the JSON data from the request body
+    $json_data = file_get_contents('php://input');
+
+    // Decode the JSON data into a PHP associative array
+    $data = json_decode($json_data, true);
+
+    // Check if JSON decoding was successful
+    if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+        // JSON decoding failed
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Invalid JSON data']);
+        exit;
+    }
+
+    // Generate a unique filename based on the current timestamp
+    $timestamp = time();
+    $filename = "b2c_result_" . $timestamp . ".json";
+    $filePath = __DIR__ . "/" . $filename; // Store files in the same directory as the PHP script
+
+    // Write JSON data to file
+    if (file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
+        // Log the file creation (optional)
+        file_put_contents("log_b2c_result_file_creation.log", "File $filename created at: " . date("Y-m-d H:i:s") . PHP_EOL, FILE_APPEND);
+
+        // Example response
+        $response = [
+            'status' => 'success',
+            'message' => 'B2C result data received and stored',
+            'file' => $filename,
+        ];
+    } else {
+        // Failed to create the file
+        http_response_code(500); // Internal Server Error
+        $response = [
+            'status' => 'error',
+            'message' => 'Failed to store B2C result data on the server',
+        ];
+    }
+
+    // Send a JSON response back to the client
+    echo json_encode($response);
+} else {
+    // Not a POST request
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Method not allowed']);
+}
+?>
+
+================================================
+File: confirmation/b2ctimeout/b2ctimeout.php
+================================================
+<?php
+// Set the content type to JSON for the response
+header('Content-Type: application/json');
+
+// Handle only POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Get the JSON data from the request body
+    $json_data = file_get_contents('php://input');
+
+    // Decode the JSON data into a PHP associative array
+    $data = json_decode($json_data, true);
+
+    // Check if JSON decoding was successful
+    if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+        // JSON decoding failed
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Invalid JSON data']);
+        exit;
+    }
+
+    // Generate a unique filename based on the current timestamp
+    $timestamp = time();
+    $filename = "b2c_timeout_" . $timestamp . ".json";
+    $filePath = __DIR__ . "/" . $filename; // Store files in the same directory as the PHP script
+
+    // Write JSON data to file
+    if (file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT))) {
+        // Log the file creation (optional)
+        file_put_contents("log_b2c_timeout_file_creation.log", "File $filename created at: " . date("Y-m-d H:i:s") . PHP_EOL, FILE_APPEND);
+
+        // Example response
+        $response = [
+            'status' => 'success',
+            'message' => 'B2C timeout data received and stored',
+            'file' => $filename,
+        ];
+    } else {
+        // Failed to create the file
+        http_response_code(500); // Internal Server Error
+        $response = [
+            'status' => 'error',
+            'message' => 'Failed to store B2C timeout data on the server',
+        ];
+    }
+
+    // Send a JSON response back to the client
+    echo json_encode($response);
+} else {
+    // Not a POST request
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Method not allowed']);
+}
+?>
+
+================================================
+File: includes/footer.php
+================================================
+</div>
+    <footer class="text-center mt-5">
+        <p>© <?php echo date("Y"); ?> M-Pesa Demo</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+================================================
+File: includes/header.php
+================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Pesa Integration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/style.css"> </head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="index.php">M-Pesa Demo</a>
+            <?php if (isset($_SESSION['username'])): ?>
+                <ul class="navbar-nav ml-auto">
+                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin.php">Admin Panel</a>
+                        </li>
+                    <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php?logout=1">Logout</a>
+                    </li>
+                </ul>
+                <?php endif; ?>
+        </nav>
+    </header>
+    <div class="container">
+
+================================================
+File: styles/styles.css
+================================================
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .form-container {
+        margin: 20px auto;
+        padding: 10px;
+    }
+}
+
