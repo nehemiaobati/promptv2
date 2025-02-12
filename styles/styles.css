@@ -1,0 +1,20 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .form-container {
+        margin: 20px auto;
+        padding: 10px;
+    }
+}
