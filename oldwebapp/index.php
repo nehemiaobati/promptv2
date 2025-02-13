@@ -128,7 +128,7 @@ require_once 'includes/header.php';
         <form method="post" class="mt-4">
             <div class="form-group">
                 <label for="withdraw_amount">Amount (KES):</label>
-                <input type="number" step="0.01" class="form-control" id="withdraw_amount" name="amount" required>
+                <input type="number" min="50" step="0.01" class="form-control" id="withdraw_amount" name="amount" required>
             </div>
             <div class="form-group">
                 <label for="phone">Phone Number (254...):</label>
