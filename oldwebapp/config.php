@@ -1,10 +1,10 @@
 <?php
 
 // Database configuration
-const DB_HOST = "localhost";
+const DB_HOST = "127.0.0.1";
 const DB_USER = "root";
-const DB_PASS = "";
-const DB_NAME = "user_auth4";
+const DB_PASS = "12345678";
+const DB_NAME = "user_auth";
 
 // M-Pesa API Configuration (Replace with your actual credentials)
 const MPESA_CONSUMER_KEY    = "cnldxAMop1mdoGS4v1SYa8jTfZ3xsS7hGta9YFzx87yHWWGI";
