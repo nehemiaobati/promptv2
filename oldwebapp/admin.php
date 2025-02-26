@@ -87,6 +87,11 @@ require_once 'includes/header.php';
 ?>
 
 <div class="container mt-4">
+        <!-- Navigation Links for Admin -->
+        <div class="mb-3">
+            <a href="privacy.php" class="text-muted">Privacy Policy</a> |
+            <a href="terms.php" class="text-muted">Terms and Conditions</a>
+        </div>
     <h2>Admin Panel</h2>
 
     <!-- Display Errors and Success Messages -->
