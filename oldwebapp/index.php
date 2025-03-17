@@ -70,6 +70,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'signin') {
 } elseif (isset($_GET['action']) && $_GET['action'] == 'terms') {
     include 'templates/terms.php';
 } else {
+    if (isset($_SESSION['success'])) {
+        $success = $_SESSION['success'];
+        unset($_SESSION['success']); // Clear the session variable
+    }
     include 'templates/content_template.php';
 }
 

@@ -2,8 +2,8 @@
 
 // Database configuration
 const DB_HOST = "127.0.0.1";
-const DB_USER = "root";
-const DB_PASS = "";
+const DB_USER = "phpmyadmin";
+const DB_PASS = "12345678";
 const DB_NAME = "user_auth3";
 
 // M-Pesa API Configuration (Replace with your actual credentials)

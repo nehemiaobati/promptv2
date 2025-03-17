@@ -81,3 +81,5 @@ INSERT INTO `users` (`username`, `password`, `role`) VALUES
 -- $hashedPassword = password_hash('adminpassword', PASSWORD_DEFAULT);
 -- echo $hashedPassword;
 -- Then copy the output and paste it into the query above.
+
+ALTER TABLE users ADD email VARCHAR(255) NOT NULL;

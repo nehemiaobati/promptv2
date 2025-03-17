@@ -1,4 +1,5 @@
 <?php
+session_start();
 // handlers/signup_handler.php
 
 if (!validateCsrfToken()) {
@@ -42,7 +43,7 @@ try {
         $user->incrementReferralCount($referrerId);
     }
 
-    $success = "Signup successful! You are now logged in.";
+    $_SESSION['success'] = "Signup successful! You are now logged in.";
     header("Location: index.php"); // Redirect to index.php after successful signup
     exit();
 } catch (Exception $e) {
