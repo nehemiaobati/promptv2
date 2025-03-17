@@ -35,7 +35,14 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-block" name="signup">Sign Up</button>
                 </form>
-                <p class="mt-3 text-center">Already have an account? <a href="index.php?action=signin">Sign In</a></p>
+<?php
+$ref = isset($_GET['ref']) ? $_GET['ref'] : '';
+$signin_url = "index.php?action=signin";
+if (!empty($ref)) {
+    $signin_url .= "&ref=" . urlencode($ref);
+}
+?>
+<p class="mt-3 text-center">Already have an account? <a href="<?php echo $signin_url; ?>">Sign In</a></p>
             </div>
         </div>
     </div>

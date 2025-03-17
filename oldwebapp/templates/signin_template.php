@@ -15,7 +15,14 @@
                     </div>
                 <button type="submit" class="btn btn-primary btn-block" name="signin">Sign In</button>
                 </form>
-                <p class="mt-3 text-center">Don't have an account? <a href="index.php?action=signup">Sign Up</a></p>
+<?php
+$ref = isset($_GET['ref']) ? $_GET['ref'] : '';
+$signup_url = "index.php?action=signup";
+if (!empty($ref)) {
+    $signup_url .= "&ref=" . urlencode($ref);
+}
+?>
+<p class="mt-3 text-center">Don't have an account? <a href="<?php echo $signup_url; ?>">Sign Up</a></p>
                 <p class="text-center"><a href= "templates/forgot_password.php">Forgot Password?</a></p>
             </div>
         </div>
