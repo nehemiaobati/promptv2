@@ -1,21 +1,73 @@
 /* General styling */
 body {
-    font-family: Arial, sans-serif;
-    padding-bottom: 50px; /* Add padding to the bottom to prevent content from being hidden behind the footer */
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f8ff; /* Light blue background */
+    color: #495057; /* Dark gray text */
+    padding-bottom: 70px;
 }
 
 .form-container {
-    max-width: 400px;
+    max-width: 500px;
     margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 30px;
+    background-color: #ffffff; /* White background */
+    border: 1px solid #ced4da; /* Light gray border */
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05); /* Lighter shadow */
+}
+
+/* Header and Footer */
+.header {
+    background-color: #ffffff; /* White background */
+    color: #495057; /* Dark gray text */
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ced4da; /* Light gray border */
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.header a {
+    color: #007bff; /* Primary color for links */
+    text-decoration: none;
+}
+
+.header a:hover {
+    text-decoration: underline;
+}
+
+.logout-link {
+    color: #007bff; /* Primary color for links */
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+.footer {
+    background-color: #ffffff; /* White background */
+    color: #495057; /* Dark gray text */
+    text-align: center;
+    padding: 1rem 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid #ced4da; /* Light gray border */
 }
 
 /* Responsive adjustments */
 @media (max-width: 576px) {
     .form-container {
         margin: 20px auto;
-        padding: 10px;
+        padding: 20px;
     }
 }

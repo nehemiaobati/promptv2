@@ -1,149 +1,194 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/config.php';
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-/**
- * Establishes a PDO database connection.
- *
- * @return PDO The PDO connection object.
- * @throws PDOException If the connection fails.
- */
-function getPDOConnection(): PDO
+// Database connection function
+function getPDOConnection()
 {
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+    $host = DB_HOST;
+    $db = DB_NAME;
+    $user = DB_USER;
+    $pass = DB_PASS;
+    $charset = 'utf8mb4';
 
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Set default fetch mode
     ];
-
     try {
-        return new PDO($dsn, DB_USER, DB_PASS, $options);
-    } catch (PDOException $e) {
-        error_log("Database connection failed: " . $e->getMessage());
-        die("Database connection failed. Please check logs."); // Consider a friendlier error page in production
+        $pdo = new PDO($dsn, $user, $pass, $options);
+    } catch (\PDOException $e) {
+        throw new \PDOException($e->getMessage(), (int)$e->getCode());
     }
+    return $pdo;
 }
 
-/**
- * Sanitizes user input to prevent XSS.
- *
- * @param string $input The input string to sanitize.
- * @return string The sanitized string.
- */
-function sanitizeInput(string $input): string
+// Input sanitization function
+function sanitizeInput(string $input)
 {
-    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    $input = trim($input);
+    $input = stripslashes($input);
+    $input = htmlspecialchars($input);
+    return $input;
 }
 
+// Phone number validation function
 /**
- * Validates Kenyan phone numbers (254...).
- *
- * @param string $phone The phone number to validate.
- * @return string|false The validated phone number (254...) or false if invalid.
+ * @param string $phone
+ * @return string|bool
  */
 function validatePhoneNumber(string $phone)
 {
-    $phone = preg_replace('/[^0-9]/', '', $phone);
-    return preg_match('/^254[0-9]{9}$/', $phone) ? $phone : false;
+    // Remove any non-digit characters
+    $phone = preg_replace('/\D/', '', $phone);
+
+    // Check if the phone number starts with 254 and is 12 digits long
+    if (substr($phone, 0, 3) == '254' && strlen($phone) == 12) {
+        return $phone;
+    } else {
+        return false;
+    }
 }
 
+// M-Pesa access token generation function
 /**
- * Generates an M-Pesa API access token.
- *
- * @param string $consumerKey The M-Pesa consumer key.
- * @param string $consumerSecret The M-Pesa consumer secret.
- * @return string|null The access token or null on failure.
+ * @param string $consumerKey
+ * @param string $consumerSecret
+ * @return string|bool
  */
-function generateMpesaAccessToken(string $consumerKey, string $consumerSecret): ?string
+function generateMpesaAccessToken(string $consumerKey, string $consumerSecret)
 {
-    $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'; // Sandbox for testing
+    $url = MPESA_SANDBOX_URL . '/oauth/v1/generate?grant_type=client_credentials';
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
-    $credentials = base64_encode($consumerKey . ':' . $consumerSecret);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Basic ' . $credentials]);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Basic ' . base64_encode($consumerKey . ':' . $consumerSecret)));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     $curl_response = curl_exec($curl);
-
-    if ($curl_response === false) {
-        error_log("M-Pesa token generation failed: " . curl_error($curl));  // Log the curl error
-        curl_close($curl);
-        return null;
-    }
-
     $response = json_decode($curl_response);
-    curl_close($curl);
-
     if (isset($response->access_token)) {
         return $response->access_token;
+    } else {
+        return false;
     }
-
-    error_log("M-Pesa token generation failed: " . json_encode($response));
-    return null;
 }
 
+// M-Pesa STK push initiation function
 /**
- * Initiates an M-Pesa STK push.
- *
- * @param string $accessToken The M-Pesa access token.
- * @param int $businessShortcode The business shortcode.
- * @param int $businessShortcodet The  business shortcode target.
- * @param string $passkey The passkey.
- * @param float $amount The amount to charge.
- * @param string $phoneNumber The phone number to charge (254...).
- * @param string $accountReference The account reference.
- * @param string $transactionDesc The transaction description.
- * @return array|null The M-Pesa response or null on failure.
+ * @param string $accessToken
+ * @param int $businessShortCode
+ * @param int $businessShortCodeT
+ * @param string $passkey
+ * @param float $amount
+ * @param string $phoneNumber
+ * @param string $accountReference
+ * @param string $transactionDesc
+ * @return array|bool
  */
-function initiateMpesaSTKPush(string $accessToken, int $businessShortcode, int $businessShortcodet, string $passkey, float $amount, string $phoneNumber, string $accountReference, string $transactionDesc): ?array
-{
-    $timestamp = date('YmdHis');
-    $password = base64_encode($businessShortcode . $passkey . $timestamp);
-
-    $url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'; // Sandbox for testing
+function initiateMpesaSTKPush(
+    string $accessToken,
+    int $businessShortCode,
+    int $businessShortCodeT,
+    string $passkey,
+    float $amount,
+    string $phoneNumber,
+    string $accountReference,
+    string $transactionDesc
+) {
+    $url = MPESA_SANDBOX_URL . '/mpesa/stkpush/v1/processrequest';
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization:Bearer ' . $accessToken]);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:Bearer ' . $accessToken)); //setting custom header
 
-    $curl_post_data = [
-        'BusinessShortCode' => $businessShortcode,
+    $timestamp = date('YmdHis');
+    $password = base64_encode($businessShortCode . $passkey . $timestamp);
+
+    $curl_post_data = array(
+        'BusinessShortCode' => $businessShortCode,
         'Password' => $password,
         'Timestamp' => $timestamp,
-        'TransactionType' => 'CustomerBuyGoodsOnline', // Or 'CustomerPayBillOnline'
+        'TransactionType' => 'CustomerBuyGoodsOnline',
         'Amount' => $amount,
         'PartyA' => $phoneNumber,
-        'PartyB' => $businessShortcodet,
+        'PartyB' => $businessShortCodeT,
         'PhoneNumber' => $phoneNumber,
         'CallBackURL' => MPESA_CALLBACK_URL,
         'AccountReference' => $accountReference,
         'TransactionDesc' => $transactionDesc
-    ];
+    );
 
     $data_string = json_encode($curl_post_data);
+
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 
     $curl_response = curl_exec($curl);
-
-    if ($curl_response === false) {
-        error_log("M-Pesa STK push error: " . curl_error($curl));
-        curl_close($curl);
-        return null;
-    }
-
     $response = json_decode($curl_response, true);
-    curl_close($curl);
-
-    if ($response === null || !isset($response['ResponseCode'])) {
-        error_log("M-Pesa STK push error: Invalid response format.");
-        return null;
-    }
-
-    if ($response['ResponseCode'] != "0") {
-        error_log("M-Pesa STK push failed: " . json_encode($response));
-    }
-
     return $response;
+}
+
+function sendEmail($recipient, $subject, $body, $attachment = null) {
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPDebug = 0;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = GMAIL_USERNAME;                     //SMTP username
+        $mail->Password   = GMAIL_PASSWORD;                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+        $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+        //Recipients
+        $mail->setFrom(GMAIL_USERNAME, 'Afrikenkid');
+        $mail->addAddress($recipient);     //Add a recipient
+
+        //Attachments
+        if ($attachment) {
+            $mail->addAttachment($attachment);         //Add attachments
+        }
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+        $mail->AltBody = strip_tags($body);
+
+        $mail->send();
+        return 'Message has been sent';
+    } catch (Exception $e) {
+        return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
+
+function displayMessages($errors = [], $success = "") {
+    if (!empty($errors)) {
+        echo '<div class="alert alert-danger">';
+        foreach ($errors as $error) {
+            echo '<p>' . htmlspecialchars($error) . '</p>';
+        }
+        echo '</div>';
+    }
+    if (!empty($success)) {
+        echo '<div class="alert alert-success">';
+        echo '<p>' . htmlspecialchars($success) . '</p>';
+        echo '</div>';
+    }
+}
+
+function generateCsrfTokenInput() {
+    return '<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '">';
+}
+
+function validateCsrfToken() {
+    return isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token'];
 }

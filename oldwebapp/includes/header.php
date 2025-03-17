@@ -3,31 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M-Pesa Integration</title>
+    <title>Afrikenkid</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="/promptv2/promptv2/oldwebapp/styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="index.php">AFRIKENKID</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <?php if (isset($_SESSION['username'])): ?>
-                        <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin.php">Admin Panel</a>
-                            </li>
-                        <?php endif; ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php?logout=1">Logout</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </nav>
+    <header class="header">
+        <img src="images/logo.png" alt="AFRIKENKID Logo" style="max-height: 50px;">
+        <h1>AFRIKENKID</h1>
+        <?php if (isset($_SESSION['username'])): ?>
+            <a href="index.php?logout=1" class="logout-link">Logout</a>
+        <?php endif; ?>
     </header>
-    <div class="container">
+    

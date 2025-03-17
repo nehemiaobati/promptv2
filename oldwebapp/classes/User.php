@@ -1,4 +1,5 @@
 <?php
+require_once  __DIR__ . '/Admin.php';
 
 class User
 {
@@ -10,6 +11,112 @@ class User
     }
 
     /**
+     * Generates a password reset token for a user.
+     *
+     * @param string $username The username.
+     * @return string|null The reset token or null if user not found.
+     * @throws Exception If there is an error generating the token.
+     */
+    public function generatePasswordResetToken(string $username): ?string
+    {
+        try {
+            // Check if user exists
+            if (!$this->checkUsernameExists($username)) {
+                return null;
+            }
+
+            // Generate a random token
+            $token = bin2hex(random_bytes(32));
+            $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+            // Store the token in the database
+            $stmt = $this->pdo->prepare("UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE username = ?");
+            $stmt->execute([$token, $expires, $username]);
+
+            return $token;
+        } catch (PDOException $e) {
+            error_log("Error generating reset token: " . $e->getMessage());
+            throw new Exception("Error generating reset token.");
+        }
+    }
+
+    /**
+     * Validates a password reset token.
+     *
+     * @param string $token The reset token.
+     * @return array|null The user data if token is valid, null otherwise.
+     */
+    public function validatePasswordResetToken(string $token): ?array
+    {
+        try {
+            // Debug: Log the token being validated
+            error_log("Validating token: " . $token);
+
+            // First check if the token exists
+            $checkToken = $this->pdo->prepare("SELECT id, username, reset_token_expires FROM users WHERE reset_token = ?");
+            $checkToken->execute([$token]);
+            $user = $checkToken->fetch();
+
+            if (!$user) {
+                error_log("Token not found in database");
+                return null;
+            }
+
+            // Debug: Log the expiration time
+            error_log("Token expires at: " . $user['reset_token_expires'] . ", Current time: " . date('Y-m-d H:i:s'));
+
+            // Check if token is expired
+            $currentTime = new DateTime();
+            $expiryTime = new DateTime($user['reset_token_expires']);
+
+            if ($currentTime > $expiryTime) {
+                error_log("Token has expired");
+                return null;
+            }
+
+            return [
+                'id' => $user['id'],
+                'username' => $user['username']
+            ];
+        } catch (PDOException $e) {
+            error_log("Error validating reset token: " . $e->getMessage());
+            return null;
+        } catch (Exception $e) {
+            error_log("General error validating token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Resets a user's password.
+     *
+     * @param string $token The reset token.
+     * @param string $newPassword The new password.
+     * @return bool True on success, false on failure.
+     * @throws Exception If there is an error resetting the password.
+     */
+    public function resetPassword(string $token, string $newPassword): bool
+    {
+        try {
+            // Validate token
+            $user = $this->validatePasswordResetToken($token);
+            if (!$user) {
+                throw new Exception("Invalid or expired reset token.");
+            }
+
+            // Hash the new password
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            // Update the password and clear the reset token
+            $stmt = $this->pdo->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?");
+            return $stmt->execute([$hashedPassword, $user['id']]);
+        } catch (PDOException $e) {
+            error_log("Error resetting password: " . $e->getMessage());
+            throw new Exception("Error resetting password.");
+        }
+    }
+
+    /**
      * Registers a new user.
      *
      * @param string $username The username.
@@ -17,10 +124,10 @@ class User
      * @return bool True on success, false on failure.
      * @throws Exception If registration fails.
      */
-    public function register(string $username, string $password): bool
+    public function register(string $username, string $email, string $password): bool
     {
-        if (empty($username) || empty($password)) {
-            throw new Exception("Username and password are required.");
+        if (empty($username) || empty($email) || empty($password)) {
+            throw new Exception("Username, email and password are required.");
         }
 
         if ($this->checkUsernameExists($username)) {
@@ -30,8 +137,8 @@ class User
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-            return $stmt->execute([$username, $hashedPassword]); // Directly return the result of execute()
+            $stmt = $this->pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+            return $stmt->execute([$username, $email, $hashedPassword]); // Directly return the result of execute()
         } catch (PDOException $e) {
             error_log("Error creating user: " . $e->getMessage());
             throw new Exception("Error creating user.");
@@ -118,7 +225,7 @@ class User
     public function getReferrals(int $userId): array
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT u.username, r.status FROM referrals r LEFT JOIN users u ON r.referred_id = u.id WHERE r.referrer_id = ? AND r.referral_tier = 1");
+            $stmt = $this->pdo->prepare("SELECT u.username, r.status, r.referral_tier FROM referrals r LEFT JOIN users u ON r.referred_id = u.id WHERE r.referrer_id = ?");
             $stmt->execute([$userId]);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
@@ -130,18 +237,49 @@ class User
     /**
      * Adds a new referral.
      *
-     * @param int $referrerId The ID of the referrer.
      * @param int $referredId The ID of the referred user.
-     * @param int $referralTier The referral tier.
+     * @param int $referrerId The ID of the referrer.
      * @return bool True on success, false on failure.
      */
-    public function addReferral(int $referrerId, int $referredId, int $referralTier): bool
+    public function addReferral(int $referredId, int $referrerId): bool
     {
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO referrals (referrer_id, referred_id, referral_tier) VALUES (?, ?, ?)");
-            return $stmt->execute([$referrerId, $referredId, $referralTier]);
+            // Check if the referral already exists
+            $stmt = $this->pdo->prepare("SELECT * FROM referrals WHERE referred_id = ? AND referrer_id = ?");
+            $stmt->execute([$referredId, $referrerId]);
+            if ($stmt->fetch()) {
+                return true; // Referral already exists, consider it a success
+            }
+
+            // Insert the referral record with default tier 1
+            $stmt = $this->pdo->prepare("INSERT INTO referrals (referred_id, referrer_id, referral_tier) VALUES (?, ?, 1)");
+            return $stmt->execute([$referredId, $referrerId]);
         } catch (PDOException $e) {
             error_log("Error adding referral: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Increments the referral count for a user.
+     *
+     * @param int $referrerId The ID of the referrer.
+     * @return bool True on success, false on failure.
+     */
+    public function incrementReferralCount(int $referrerId): bool
+    {
+        try {
+            // Check if the user exists
+            $stmt = $this->pdo->prepare("SELECT id FROM users WHERE id = ?");
+            $stmt->execute([$referrerId]);
+            if (!$stmt->fetch()) {
+                throw new Exception("Referrer user not found.");
+            }
+            // Increment the referral count for the referrer
+            // In this case, we are not using referral_count, but we are using the referrals table
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error incrementing referral count: " . $e->getMessage());
             return false;
         }
     }
@@ -220,24 +358,6 @@ class User
     }
 
     /**
-     * Gets the initial deposit amount from the settings table.
-     *
-     * @return float The initial deposit amount.
-     */
-    public function getInitialDepositAmount(): float
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_name = 'initial_deposit'");
-            $stmt->execute();
-            $result = $stmt->fetch();
-            return $result ? (float)$result['setting_value'] : 0.00;
-        } catch (PDOException $e) {
-            error_log("Error fetching initial deposit amount: " . $e->getMessage());
-            return 0.00;
-        }
-    }
-
-    /**
      * Checks the status of a transaction.
      *
      * @param int $userId The ID of the user.
@@ -284,62 +404,129 @@ class User
      */
     public function processReferrals(int $userId): void
     {
-        $initialDepositAmount = $this->getInitialDepositAmount();
+        if (!$this->isUserEligibleForReferralBonus($userId)) {
+            return;
+        }
+
+        $referral = $this->getFirstTierReferral($userId);
+
+        if (!$referral) {
+            return;
+        }
+
+        $this->processFirstTierReferral($referral);
+    }
+
+    /**
+     * Checks if a user is eligible for a referral bonus.
+     *
+     * @param int $userId The ID of the user.
+     * @return bool True if the user is eligible, false otherwise.
+     */
+    private function isUserEligibleForReferralBonus(int $userId): bool
+    {
+        $admin = new Admin($this->pdo);
+        $initialDepositAmount = $admin->getInitialDepositAmount();
         $currentUserBalance = $this->getBalance($userId);
+        return $currentUserBalance >= $initialDepositAmount;
+    }
 
-        // Check if the user making the deposit has met the initial deposit requirement
-        if ($currentUserBalance >= $initialDepositAmount) {
+    /**
+     * Gets the first-tier referral for a user.
+     *
+     * @param int $userId The ID of the user.
+     * @return array|null The first-tier referral, or null if not found.
+     */
+    /**
+     * Gets the first-tier referral for a user.
+     *
+     * @param int $userId The ID of the user (the referred user).
+     * @return array|null The first-tier referral, or null if not found.
+     */
+    private function getFirstTierReferral(int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
+        $stmt->execute([$userId]);
+        $referral = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $referral ? $referral : null;
+    }
 
-            // Get referral details for the current user (referred_id)
-            $referralDetails = $this->pdo->prepare("SELECT id, referrer_id, referral_tier FROM referrals WHERE referred_id = ? AND status = 'pending'");
-            $referralDetails->execute([$userId]);
-            $referral = $referralDetails->fetch();
+    /**
+     * Processes the first-tier referral bonus.
+     *
+     * @param array $referral The first-tier referral.
+     * @return void
+     */
+    private function processFirstTierReferral(array $referral): void
+    {
+        $admin = new Admin($this->pdo);
+        $initialDepositAmount = $admin->getInitialDepositAmount();
+        $referrerId = $referral['referrer_id'];
+        $referrerBalance = $this->getBalance($referrerId);
 
-            if ($referral) {
-                // Referral exists (user was referred by someone)
-                $referrerId = $referral['referrer_id']; // First-tier referrer
+        if ($referrerBalance >= $initialDepositAmount) {
+            // Update first-tier referral status to 'successful'
+            $updateReferral = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE id = ?");
+            $updateReferral->execute([$referral['id']]);
 
-                // Get the current balance of the first-tier referrer
-                $referrerBalance = $this->getBalance($referrerId);
+            // Calculate and add referral earnings (first tier)
+            $referralEarnings = $initialDepositAmount * 0.3;
+            $this->addReferralEarnings($referrerId, $referralEarnings);
 
-                // Check if the first-tier referrer's balance is also equal to or greater than the initial deposit
-                if ($referrerBalance >= $initialDepositAmount) {
+            $this->processSecondTierReferral($referrerId, $referral['referred_id']);
+        }
+    }
 
-                    // Update first-tier referral status to 'successful'
-                    $updateReferral = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE id = ?");
-                    $updateReferral->execute([$referral['id']]);
+    /**
+     * Processes the second-tier referral bonus.
+     *
+     * @param int $referrerId The ID of the first-tier referrer.
+     * @param int $userId The ID of the referred user.
+     * @return void
+     */
+    private function processSecondTierReferral(int $referrerId, int $userId): void
+    {
+        $admin = new Admin($this->pdo);
+        $initialDepositAmount = $admin->getInitialDepositAmount();
+        $secondTierReferrer = $this->pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'successful'");
+        $secondTierReferrer->execute([$referrerId]);
+        $secondTierReferral = $secondTierReferrer->fetch();
 
-                    // Calculate and add referral earnings (first tier)
-                    $referralEarnings = $initialDepositAmount * 0.3;
-                    $this->addReferralEarnings($referrerId, $referralEarnings);
+        if ($secondTierReferral) {
+            $secondTierReferrerId = $secondTierReferral['referrer_id'];
+            $secondTierReferrerBalance = $this->getBalance($secondTierReferrerId);
 
-                    // Check for a second-tier referrer
-                    $secondTierReferrer = $this->pdo->prepare("SELECT id, referrer_id FROM referrals WHERE referred_id = ? AND referral_tier = 1 AND status = 'pending'");
-                    $secondTierReferrer->execute([$referrerId]);
-                    $secondTierReferral = $secondTierReferrer->fetch();
+            if ($secondTierReferrerBalance >= $initialDepositAmount) {
+                // Add second-tier referral (tier 2)
+                $this->addReferral($secondTierReferral['referrer_id'], $userId, 2);
 
-                    if ($secondTierReferral) {
-                        // Get the current balance of the second-tier referrer
-                        $secondTierReferrerId = $secondTierReferral['referrer_id'];
-                        $secondTierReferrerBalance = $this->getBalance($secondTierReferrerId);
+                // Calculate and add referral earnings (second tier)
+                $secondTierEarnings = $initialDepositAmount * 0.1;
+                $this->addReferralEarnings($secondTierReferral['referrer_id'], $secondTierEarnings);
 
-                        // Check if the second-tier referrer's balance is also equal to or greater than the initial deposit
-                        if ($secondTierReferrerBalance >= $initialDepositAmount) {
-
-                            // Add second-tier referral (tier 2)
-                            $this->addReferral($secondTierReferral['referrer_id'], $userId, 2);
-
-                            // Calculate and add referral earnings (second tier)
-                            $secondTierEarnings = $initialDepositAmount * 0.1;
-                            $this->addReferralEarnings($secondTierReferral['referrer_id'], $secondTierEarnings);
-
-                            // Update second-tier referral status to 'successful'
-                            $updateSecondTier = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE referred_id = ? AND referral_tier = 2");
-                            $updateSecondTier->execute([$userId]);
-                        }
-                    }
-                }
+                // Update second-tier referral status to 'successful'
+                $updateSecondTier = $this->pdo->prepare("UPDATE referrals SET status = 'successful' WHERE referred_id = ? AND referral_tier = 2");
+                $updateSecondTier->execute([$userId]);
             }
+        }
+    }
+
+    /**
+     * Gets the user's email address.
+     *
+     * @param string $username The username.
+     * @return string|null The user's email address, or null if not found.
+     */
+    public function getUserEmail(string $username): ?string
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT email FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $result = $stmt->fetch();
+            return $result ? $result['email'] : null;
+        } catch (PDOException $e) {
+            error_log("Error fetching user email: " . $e->getMessage());
+            return null;
         }
     }
 }

@@ -1,0 +1,35 @@
+## Web Application Summary
+
+**Application Overview:**
+
+This web application is a system for processing payments and sending emails.
+
+**Key Features:**
+
+*   User authentication (signup, sign-in)
+*   M-Pesa payment integration
+*   Withdrawal requests
+*   Admin panel
+*   Content display (privacy, terms, etc.)
+
+**Technical Architecture:**
+
+*   PHP-based application
+*   Uses a MySQL database
+*   Integrates with the M-Pesa API
+*   Uses Gmail for sending emails
+
+**File Structure:**
+
+*   `config.php`: Configuration settings
+*   `index.php`: Main entry point
+*   `classes/`: Classes for user management, payment processing, and settings
+*   `templates/`: Templates for different pages
+*   `handlers/`: Handlers for different actions
+*   `includes/`: Header and footer files
+*   `PHPMailer/`: PHPMailer library for sending emails
+
+**Installation:**
+
+1.  Clone the repository: `git clone <repository_url>`
+2.  Install dependencies: `composer install`

@@ -86,7 +86,7 @@ class Payment
                 continue; // Skip if JSON is invalid
             }
 
-            if (isset($data['Body']['stkCallback'])) {
+            if (isset($data['Body']['stkCallback']) && isset($data['Body']['stkCallback']['MerchantRequestID']) && isset($data['Body']['stkCallback']['ResultCode'])) {
                 $stkCallback = $data['Body']['stkCallback'];
                 $merchantRequestID = $stkCallback['MerchantRequestID'];
                 $resultCode = $stkCallback['ResultCode'];
@@ -172,7 +172,7 @@ class Payment
         curl_setopt_array(
             $curl,
             array(
-                CURLOPT_URL => 'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest', // Sandbox URL
+                CURLOPT_URL => MPESA_B2C_API_URL, // Sandbox URL
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
                     'Authorization: Bearer ' . $accessToken
@@ -182,7 +182,7 @@ class Payment
                 CURLOPT_POSTFIELDS => json_encode(
                     array(
                         'InitiatorName' => 'testapi',
-                        'SecurityCredential' => 'EsJocK7+NjqZPC3I3EO+TbvS+xVb9TymWwaKABoaZr/Z/n0UysSs..', // Use your security credential
+                        'SecurityCredential' => MPESA_B2C_SECURITY_CREDENTIAL, // Use your security credential
                         'CommandID' => 'BusinessPayment',
                         'Amount' => $amount,
                         'PartyA' => MPESA_BUSINESS_SHORTCODE,
@@ -241,7 +241,7 @@ class Payment
                 continue;  // Skip if JSON is invalid
             }
 
-            if (isset($data['Result'])) {
+            if (isset($data['Result']) && isset($data['Result']['ResultType']) && isset($data['Result']['ResultCode']) && isset($data['Result']['OriginatorConversationID'])) {
                 $result = $data['Result'];
                 $resultType = $result['ResultType'];
                 $resultCode = $result['ResultCode'];
@@ -313,7 +313,7 @@ class Payment
                 continue; // Skip if JSON is invalid
             }
 
-            if (isset($data['Result'])) {
+           if (isset($data['Result']) && isset($data['Result']['ResultType']) && isset($data['Result']['ResultCode']) && isset($data['Result']['OriginatorConversationID'])) {
                 $result = $data['Result'];
                 $resultType = $result['ResultType'];
                 $resultCode = $result['ResultCode'];

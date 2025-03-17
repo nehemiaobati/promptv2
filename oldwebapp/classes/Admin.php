@@ -17,8 +17,16 @@ class Admin
      */
     public function isAdmin(int $userId): bool
     {
-        // Simple check - you might have a separate 'admins' table or a role in 'users'
-        return $userId == 1; // Assuming admin has ID 1 in the 'users' table
+        try {
+            $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch();
+
+            return $result && $result['role'] === 'admin';
+        } catch (PDOException $e) {
+            error_log("Error checking admin status: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -146,7 +154,6 @@ class Admin
             return false;
         }
     }
-
     /**
      * Gets the initial deposit amount.
      *
@@ -160,8 +167,11 @@ class Admin
             $result = $stmt->fetch();
             return $result ? (float)$result['setting_value'] : 0.00;
         } catch (PDOException $e) {
-            error_log("Error fetching initial deposit amount: " . $e->getMessage());
+            error_log("Error getting initial deposit: " . $e->getMessage());
             return 0.00;
         }
     }
+
 }
+
+
